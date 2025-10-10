@@ -11,11 +11,11 @@ export const HomeView = () => {
       <HeaderComponent />
       <div className={styles.containerBox}>
         <div className={styles.containerItens}>
-          <div className={styles.containerItem} onClick={() => (alert(""))}>
+          <div className={styles.containerItem} onClick={() => alert("")}>
             <Users size={26} color="white" /> Item 1
           </div>
           <div className={styles.containerItem}>
-            <Fish size={26} color="white" /> Item 2
+            <Fish size={26} color="white" /> Item 22
           </div>
         </div>
       </div>
