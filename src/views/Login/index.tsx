@@ -1,105 +1,87 @@
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { User, Eye, EyeOff } from "lucide-react";
 import styles from './index.module.css';
-import { useEffect, useState } from 'react';
-import { loginService } from '../../app/services/user/loginService';
-import { useDispatch } from 'react-redux';
-import { setUser } from '../../redux/reducers/authReducer';
-import { tokenService } from '../../app/services/user/loginByTokenUser';
-import { User } from "lucide-react";
 
 export const LoginView: React.FC = () => {
-	const navigate = useNavigate();
-	const dispatch = useDispatch();
-	const [usuario, setUsuario] = useState<string>('');
-	const [senha, setSenha] = useState<string>('');
-	const [senhaVisivel, setSenhaVisivel] = useState<boolean>(false);
-	const [error, setError] = useState<string>('');
+  const navigate = useNavigate(); // ✅ useNavigate dentro do componente
+  const [usuario, setUsuario] = useState('');
+  const [senha, setSenha] = useState('');
+  const [senhaVisivel, setSenhaVisivel] = useState(false);
+  const [error, setError] = useState('');
 
-	// useEffect(() => {
-	// 	const handleStorageChange = () => {
-	// 		const token = localStorage.getItem('token');
-	// 		if (token) {
-	// 			validateToken(token);
-	// 		} 
-	// 	};
+  const handleLogin = async () => {
+    setError('');
+    if (!usuario || !senha) {
+      setError('Preencha usuário e senha');
+      return;
+    }
+    // Simulação de login
+    console.log('Login:', { usuario, senha });
+    navigate('/home'); // Navega para a home após login
+  };
 
-	// 	const validateToken = async (token: string) => {
-	// 		try {
-	// 			const response = await tokenService(token);
-	// 			console.log("response token service", response);
-	// 			if (response.status === "error") {
-	// 				navigate('/');
-	// 				return
-	// 			} 
-	// 			navigate('/home');
-	// 			dispatch(setUser(response.data))
+  return (
+    <div className={styles.container}>
+      <div className={styles.containerLogin}>
+        <div className={styles.header}>
+          <User size={28} strokeWidth={3} /> Login
+        </div>
 
-	// 		} catch (error) {
-	// 			console.error("Erro ao validar token:", error);
-	// 			navigate('/');
-	// 		}
-	// 	};
+        <form
+          className={styles.form}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleLogin();
+          }}
+        >
+          <div className={styles.inputGroup}>
+            <input
+              type="text"
+              value={usuario}
+              onFocus={() => setError('')}
+              onChange={(e) => setUsuario(e.target.value)}
+              className={error ? styles.inputError : ''}
+              placeholder="Usuário"
+              autoFocus
+            />
+          </div>
 
-	// 	window.addEventListener("storage", handleStorageChange);
+          <div className={styles.inputGroup}>
+            <input
+              type={senhaVisivel ? 'text' : 'password'}
+              value={senha}
+              onFocus={() => setError('')}
+              onChange={(e) => setSenha(e.target.value)}
+              className={error ? styles.inputError : ''}
+              placeholder="Senha"
+            />
+            <span
+              className={styles.showPasswordIcon}
+              onClick={() => setSenhaVisivel(!senhaVisivel)}
+            >
+              {senhaVisivel ? <EyeOff size={20} /> : <Eye size={20} />}
+            </span>
+          </div>
 
-	// 	handleStorageChange(); // Chamada inicial
+          {error && <div className={styles.errorMessage}>{error}</div>}
 
-	// 	return () => {
-	// 		window.removeEventListener("storage", handleStorageChange);
-	// 	};
-	// }, [navigate, dispatch]);
+          <button type="submit" className={styles.loginButton}>
+            Entrar
+          </button>
+        </form>
 
-
-	// const handleLogin = async (usuario: string, senha: string) => {
-	// 	const response = await loginService(usuario, senha);
-	// 	setError('');
-
-	// 	if (response.status === "error") {
-	// 		setError('Login ou senha inválidos');
-	// 		return
-	// 	}
-
-	// 	dispatch(setUser(response.data));
-	// 	localStorage.setItem('token', response.data.token);
-	// 	navigate("/home");
-	// };
-
-	return (
-		<div className={styles.container}>
-			<div className={styles.containerLogin}>
-				<div className={styles.header}>Login <User size ={28}  strokeWidth ={3} /></div>
-				<form className={styles.form}>
-					<input
-						type="text"
-						value={usuario}
-						onFocus={() => setError('')}
-						onChange={(e) => setUsuario(e.target.value)}
-						className={error ? styles.inputError : ''}
-						placeholder="Usuário"
-					/>
-					<input
-						type={senhaVisivel ? 'text' : 'password'}
-						value={senha}
-						onFocus={() => setError('')}
-						onChange={(e) => setSenha(e.target.value)}
-						className={error ? styles.inputError : ''}
-						placeholder="Senha"
-					/>
-					{senha &&
-						<label onClick={() => setSenhaVisivel(!senhaVisivel)}>
-
-							<div>{senhaVisivel ? "Esconder" : "Mostrar"} senha</div>
-						</label>
-					}
-					{error && <div className={styles.errorMessage}>{error}</div>}
-				</form>
-				<button
-					// onClick={() => handleLogin(usuario, senha)}
-					className={styles.loginButton}
-				>
-					Entrar
-				</button>
-			</div>
-		</div>
-	);
+        <div className={styles.footer}>
+          <span>Não tem conta?</span>
+          <button
+            type="button"
+            className={styles.registerButton}
+            onClick={() => navigate('/cadastro')} // ✅ Navega para a tela de cadastro
+          >
+            Criar Cadastro
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 };
