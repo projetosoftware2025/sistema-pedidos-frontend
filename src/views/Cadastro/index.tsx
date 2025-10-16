@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import styles from "./index.module.css";
 
 const Cadastro: React.FC = () => {
   const navigate = useNavigate();
@@ -39,21 +40,22 @@ const Cadastro: React.FC = () => {
 
     setErro("");
     setMensagem("Cadastro realizado com sucesso!");
-    setTimeout(() => navigate("/"), 1500); // volta para a tela de login
+    setTimeout(() => navigate("/login"), 1500);
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>Crie sua conta</h2>
-        <form onSubmit={handleSubmit} style={styles.form}>
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <h2 className={styles.title}>Crie sua conta</h2>
+
+        <form onSubmit={handleSubmit} className={styles.form}>
           <input
             type="text"
             name="nome"
             placeholder="Nome completo"
             value={formData.nome}
             onChange={handleChange}
-            style={styles.input}
+            className={styles.input}
             required
           />
           <input
@@ -62,7 +64,7 @@ const Cadastro: React.FC = () => {
             placeholder="E-mail"
             value={formData.email}
             onChange={handleChange}
-            style={styles.input}
+            className={styles.input}
             required
           />
           <input
@@ -71,7 +73,7 @@ const Cadastro: React.FC = () => {
             placeholder="CPF"
             value={formData.cpf}
             onChange={handleChange}
-            style={styles.input}
+            className={styles.input}
             required
           />
           <input
@@ -80,7 +82,7 @@ const Cadastro: React.FC = () => {
             placeholder="Senha"
             value={formData.senha}
             onChange={handleChange}
-            style={styles.input}
+            className={styles.input}
             required
           />
           <input
@@ -89,19 +91,16 @@ const Cadastro: React.FC = () => {
             placeholder="Confirmar senha"
             value={formData.confirmarSenha}
             onChange={handleChange}
-            style={styles.input}
+            className={styles.input}
             required
           />
 
-          {erro && <p style={styles.erro}>{erro}</p>}
-          {mensagem && <p style={styles.sucesso}>{mensagem}</p>}
+          {erro && <p className={styles.erro}>{erro}</p>}
+          {mensagem && <p className={styles.sucesso}>{mensagem}</p>}
 
           <button
             type="submit"
-            style={{
-              ...styles.button,
-              ...(hoverButton ? styles.buttonHover : {}),
-            }}
+            className={`${styles.button} ${hoverButton ? styles.buttonHover : ""}`}
             onMouseEnter={() => setHoverButton(true)}
             onMouseLeave={() => setHoverButton(false)}
           >
@@ -109,10 +108,12 @@ const Cadastro: React.FC = () => {
           </button>
         </form>
 
-        {/* Link funcional para voltar ao login */}
-        <p style={styles.linkText}>
+        <p className={styles.linkText}>
           Já tem uma conta?{" "}
-          <span style={styles.link} onClick={() => navigate("/")}>
+          <span
+            className={styles.link}
+            onClick={() => navigate("/login")}
+          >
             Voltar para Login
           </span>
         </p>
@@ -121,88 +122,4 @@ const Cadastro: React.FC = () => {
   );
 };
 
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    display: "flex",
-    justifyContent: "center",       // centraliza horizontalmente
-    alignItems: "center",           // centraliza verticalmente
-    height: "100vh",
-    background: "linear-gradient(135deg, #ff8a00, #e52e71)",
-    fontFamily: "Arial, sans-serif",
-    padding: "20px",                // espaço extra em telas pequenas
-  },
-  card: {
-    display: "flex",                // torna flex container
-    flexDirection: "column",        // itens ficam em coluna
-    alignItems: "center",           // centraliza itens horizontalmente
-    background: "#fff",
-    padding: "40px",
-    borderRadius: "15px",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
-    width: "100%",
-    maxWidth: "400px",              // limita largura do card
-    textAlign: "center",
-  },
-  title: {
-    fontSize: "26px",
-    marginBottom: "25px",
-    fontWeight: "bold",
-    color: "#333",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    width: "100%",                  // faz o form ocupar toda largura do card
-    alignItems: "center",           // centraliza horizontalmente
-  },
-  input: {
-    width: "100%",                  // inputs ocupam toda largura do form
-    marginBottom: "15px",
-    padding: "12px 15px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    outline: "none",
-    fontSize: "14px",
-    boxSizing: "border-box",       // padding não quebra a largura
-    transition: "all 0.2s ease",
-  },
-  erro: {
-    color: "red",
-    fontSize: "13px",
-    marginBottom: "10px",
-  },
-  sucesso: {
-    color: "green",
-    fontSize: "13px",
-    marginBottom: "10px",
-  },
-  button: {
-    width: "100%",                  // botão ocupa toda largura do card
-    backgroundColor: "#007bff",
-    color: "#fff",
-    border: "none",
-    padding: "12px",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontWeight: "bold",
-    fontSize: "16px",
-    transition: "all 0.3s ease",
-  },
-  buttonHover: {
-    backgroundColor: "#0056b3",
-    transform: "translateY(-2px)",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-  },
-  linkText: {
-    marginTop: "15px",
-    fontSize: "14px",
-  },
-  link: {
-    color: "#007bff",
-    cursor: "pointer",
-    fontWeight: "bold",
-    textDecoration: "underline",
-  },
-};
-
-export default Cadastro
+export default Cadastro;

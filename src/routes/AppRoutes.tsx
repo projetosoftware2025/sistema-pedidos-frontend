@@ -6,18 +6,18 @@ import CadastroView from "../views/Cadastro";
 export const AppRoutes = createBrowserRouter([
   {
     path: "/",
-    element: <LoginView />, 
-  },
-  {
-    path: "/home",
     element: <HomeView />,
   },
   {
-    path: "/cadastro", // ✅ Corrigido aqui
+    path: "/login",
+    element: <LoginView />, 
+  },
+  {
+    path: "/cadastro", 
     element: <CadastroView />, 
   },
   {
-    path: "*", // ✅ Rota de erro personalizada (opcional)
+    path: "*",
     element: <h1>Página não encontrada</h1>,
   },
 ]);

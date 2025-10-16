@@ -4,7 +4,7 @@ import { User, Eye, EyeOff } from "lucide-react";
 import styles from './index.module.css';
 
 export const LoginView: React.FC = () => {
-  const navigate = useNavigate(); // ✅ useNavigate dentro do componente
+  const navigate = useNavigate();
   const [usuario, setUsuario] = useState('');
   const [senha, setSenha] = useState('');
   const [senhaVisivel, setSenhaVisivel] = useState(false);
