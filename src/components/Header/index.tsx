@@ -28,13 +28,13 @@ export const HeaderComponent: React.FC = () => {
         const response = await tokenService(token);
         console.log("response token service", response);
         if (response.status === "error") {
-          navigate("/");
+          navigate("/login");
           return;
         }
         dispatch(setUser(response.data));
       } catch (error) {
         console.error("Erro ao validar token:", error);
-        navigate("/");
+        navigate("/login");
       }
     };
 
@@ -50,7 +50,7 @@ export const HeaderComponent: React.FC = () => {
   const handleUserOut = () => {
     dispatch(resetAuth());
     localStorage.setItem("token", "");
-    navigate("/");
+    navigate("/login");
   };
   return (
     <div className={styles.header}>

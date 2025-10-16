@@ -1,0 +1,411 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #ff8a00, #e52e71);
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+/*.card {
+  display: flex;
+  flex-direction: column;.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #ff8a00, #e52e71);
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}*/
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.title {
+  font-size: 26px;
+  margin-bottom: 25px;
+  font-weight: bold;
+  color: #333;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.erro {
+  color: red;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.sucesso {
+  color: green;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.button {
+  width: 100%;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.linkText {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.link {
+  color: #007bff;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+  /*align-items: center;
+  background: #fff;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}*/
+
+.title {
+  font-size: 26px;
+  margin-bottom: 25px;
+  font-weight: bold;
+  color: #333;
+}
+
+.form {
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #ff8a00, #e52e71);
+}
+
+.containerLogin {
+  background: #fff;
+  padding: 40px 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: all 0.3s ease;
+}
+
+.header {
+  font-size: 1.8rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  color: #333;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.inputGroup {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+input {
+  width: 100%;
+  padding: 12px 40px 12px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  border-color: #e52e71;
+  box-shadow: 0 0 8px rgba(229,46,113,0.3);
+}
+
+.inputError {
+  border-color: red;
+}
+
+.showPasswordIcon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.2s ease;
+}
+
+.showPasswordIcon:hover {
+  color: #e52e71;
+}
+
+.errorMessage {
+  color: red;
+  font-size: 0.9rem;
+  text-align: center;
+  animation: shake 0.3s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(-3px); }
+  25% { transform: translateX(3px); }
+  50% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+  100% { transform: translateX(0); }
+}
+
+.loginButton {
+  padding: 12px;
+  background: #e52e71;
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.loginButton:hover {
+  background: #ff8a00;
+  transform: translateY(-2px);
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.registerButton {
+  background: none;
+  border: none;
+  color: #e52e71;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.registerButton:hover {
+  color: #ff8a00;
+}
+
+/* Fundo laranja com ícones */
+/* Fundo laranja com padrão */
+.background {
+  /*background: linear-gradient(135deg, #ff7a00, #ffaf40);*/
+background-image: url('../../assets/background.png');
+
+
+  background-repeat: repeat;
+  background-size: 43rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* Container branco centralizado */
+.cadastroContainer {
+  background-color: #fff;
+  width: 270px;
+  padding: 5px 15px; 
+  border-radius: 25px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+/* Logo e título */
+.logoArea {
+  margin-bottom: 15px;
+}
+
+.logo {
+  width: 80px;
+  height: auto;
+}
+
+.title {
+  color: #ff6600;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+/* Formulário */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inputGroup {
+  text-align: left;
+}
+
+.input {
+  width: 100%;          /*  reduz a largura para não encostar nas laterais */
+  padding: 12px 18px;  /* 🔹 mais espaço interno */
+  margin: 0 auto;      /* 🔹 centraliza o input horizontalmente */
+  border: 2px solid #ff6600;
+  border-radius: 25px;
+  outline: none;
+  font-size: 15px;
+  box-sizing: border-box; /* 🔹 garante que o padding não quebre o layout */
+}
+
+.input:focus {
+  border-color: #ff8533;
+}
+
+.error {
+  color: red;
+  font-size: 13px;
+  margin-top: 5px;
+  margin-top: 5px;
+  margin-left: 14px;
+  text-align: left;
+  
+}
+
+/* Botão */
+.button {
+  background-color: #ff6600;
+  color: #fff;
+  border: none;
+  padding: 12px 0;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.button:hover {
+  background-color: #ff8533;
+}
+
+/* Link inferior */
+.links {
+  margin-top: 1px;
+  font-size: 14px;
+}
+
+.links a {
+  color: #ff6600;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
+  /*flex-direction: column;
+  width: 100%;
+  align-items: center;
+}*/
+
+.input {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.erro {
+  color: red;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.sucesso {
+  color: green;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.button {
+  width: 100%;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.linkText {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.link {
+  color: #007bff;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+}

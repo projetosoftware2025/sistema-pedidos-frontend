@@ -8,6 +8,5 @@ export interface UserInterface {
   email: string;
   senha?: string;
   admin?: number;
-  instrutor?: number;
   token?: string;
 }
