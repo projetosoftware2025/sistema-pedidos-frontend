@@ -3,158 +3,77 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(135deg, #ff8a00, #e52e71);
-  font-family: Arial, sans-serif;
+
+  /* Fundo com padrão e gradiente translúcido */
+  background-image:
+    linear-gradient(rgba(255, 138, 0, 0.85), rgba(229, 46, 113, 0.85)),
+    url('../../assets/background.png');
+  
+  background-size: 800px;
+  background-position: center;
+  backdrop-filter: blur(2px);
   padding: 20px;
 }
 
-/*.card {
-  display: flex;
-  flex-direction: column;.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #ff8a00, #e52e71);
-  font-family: Arial, sans-serif;
-  padding: 20px;
-}*/
-
-.card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: #fff;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-}
-
-.title {
-  font-size: 26px;
-  margin-bottom: 25px;
-  font-weight: bold;
-  color: #333;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  align-items: center;
-}
-
-.input {
-  width: 100%;
-  margin-bottom: 15px;
-  padding: 12px 15px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  outline: none;
-  font-size: 14px;
-  box-sizing: border-box;
-  transition: all 0.2s ease;
-}
-
-.erro {
-  color: red;
-  font-size: 13px;
-  margin-bottom: 10px;
-}
-
-.sucesso {
-  color: green;
-  font-size: 13px;
-  margin-bottom: 10px;
-}
-
-.button {
-  width: 100%;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 16px;
-  transition: all 0.3s ease;
-}
-
-.button:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.linkText {
-  margin-top: 15px;
-  font-size: 14px;
-}
-
-.link {
-  color: #007bff;
-  cursor: pointer;
-  font-weight: bold;
-  text-decoration: underline;
-}
-
-  /*align-items: center;
-  background: #fff;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-}*/
-
-.title {
-  font-size: 26px;
-  margin-bottom: 25px;
-  font-weight: bold;
-  color: #333;
-}
-
-.form {
-  display: flex; 
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #ff8a00, #e52e71);
-}
-
+/* Card central */
 .containerLogin {
-  background: #fff;
-  padding: 40px 30px;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-  width: 350px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px 25px;
+  border-radius: 20px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 340px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.6s ease;
 }
 
+.containerLogin:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Animação de entrada */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cabeçalho com ícone */
 .header {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: bold;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
-  color: #333;
+  color: #ff6600;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
+.logo {
+  width: 280px;
+  max-width: 90%;
+  margin: 0 auto 10px;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
+  transition: transform 0.4s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+/* Formulário */
 .form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
 }
 
+/* Campos de input */
 .inputGroup {
   position: relative;
   display: flex;
@@ -163,69 +82,89 @@
 
 input {
   width: 100%;
-  padding: 12px 40px 12px 12px;
+  padding: 10px 38px 10px 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1.5px solid #ddd;
   outline: none;
+  background: #fafafa;
+  color: #333;
+  font-size: 0.95rem;
   transition: all 0.3s ease;
 }
 
 input:focus {
-  border-color: #e52e71;
-  box-shadow: 0 0 8px rgba(229,46,113,0.3);
+  border-color: #ff6600;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(255, 102, 0, 0.2);
 }
 
+/* Borda vermelha se erro */
 .inputError {
-  border-color: red;
+  border-color: #e52e71;
+  background: #ffe6eb;
 }
 
+/* Ícones (mostrar senha) */
 .showPasswordIcon {
   position: absolute;
   right: 10px;
   cursor: pointer;
-  color: #555;
+  color: #777;
   transition: color 0.2s ease;
 }
 
 .showPasswordIcon:hover {
-  color: #e52e71;
+  color: #ff6600;
 }
 
+/* Mensagens */
 .errorMessage {
-  color: red;
-  font-size: 0.9rem;
+  color: #e52e71;
+  font-size: 0.85rem;
   text-align: center;
   animation: shake 0.3s;
 }
 
-@keyframes shake {
-  0% { transform: translateX(-3px); }
-  25% { transform: translateX(3px); }
-  50% { transform: translateX(-3px); }
-  75% { transform: translateX(3px); }
-  100% { transform: translateX(0); }
+.successMessage {
+  color: #00b050;
+  font-size: 0.85rem;
+  text-align: center;
+  animation: fadeIn 0.4s;
 }
 
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+/* Botão principal */
 .loginButton {
-  padding: 12px;
-  background: #e52e71;
+  padding: 10px;
+  background: linear-gradient(90deg, #ff8a00, #e52e71);
   border: none;
   color: #fff;
   font-weight: bold;
+  font-size: 0.95rem;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(255, 102, 0, 0.3);
 }
 
 .loginButton:hover {
-  background: #ff8a00;
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 10px rgba(229, 46, 113, 0.4);
 }
 
+/* Rodapé */
 .footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  font-size: 0.85rem;
 }
 
 .registerButton {
@@ -241,171 +180,27 @@ input:focus {
   color: #ff8a00;
 }
 
-/* Fundo laranja com ícones */
-/* Fundo laranja com padrão */
-.background {
-  /*background: linear-gradient(135deg, #ff7a00, #ffaf40);*/
-background-image: url('../../assets/background.png');
+/* --- Responsividade --- */
+@media (max-width: 400px) {
+  .containerLogin {
+    padding: 25px 20px;
+    max-width: 300px;
+  }
 
+  .logo {
+    width: 100px;
+  }
 
-  background-repeat: repeat;
-  background-size: 43rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-}
+  .header {
+    font-size: 1.3rem;
+  }
 
-/* Container branco centralizado */
-.cadastroContainer {
-  background-color: #fff;
-  width: 270px;
-  padding: 5px 15px; 
-  border-radius: 25px;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
-  text-align: center;
-}
+  input {
+    font-size: 0.9rem;
+  }
 
-/* Logo e título */
-.logoArea {
-  margin-bottom: 15px;
-}
-
-.logo {
-  width: 80px;
-  height: auto;
-}
-
-.title {
-  color: #ff6600;
-  font-weight: 700;
-  margin-top: 10px;
-}
-
-/* Formulário */
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.inputGroup {
-  text-align: left;
-}
-
-.input {
-  width: 100%;          /*  reduz a largura para não encostar nas laterais */
-  padding: 12px 18px;  /* 🔹 mais espaço interno */
-  margin: 0 auto;      /* 🔹 centraliza o input horizontalmente */
-  border: 2px solid #ff6600;
-  border-radius: 25px;
-  outline: none;
-  font-size: 15px;
-  box-sizing: border-box; /* 🔹 garante que o padding não quebre o layout */
-}
-
-.input:focus {
-  border-color: #ff8533;
-}
-
-.error {
-  color: red;
-  font-size: 13px;
-  margin-top: 5px;
-  margin-top: 5px;
-  margin-left: 14px;
-  text-align: left;
-  
-}
-
-/* Botão */
-.button {
-  background-color: #ff6600;
-  color: #fff;
-  border: none;
-  padding: 12px 0;
-  border-radius: 25px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.button:hover {
-  background-color: #ff8533;
-}
-
-/* Link inferior */
-.links {
-  margin-top: 1px;
-  font-size: 14px;
-}
-
-.links a {
-  color: #ff6600;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.links a:hover {
-  text-decoration: underline;
-}
-  /*flex-direction: column;
-  width: 100%;
-  align-items: center;
-}*/
-
-.input {
-  width: 100%;
-  margin-bottom: 15px;
-  padding: 12px 15px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  outline: none;
-  font-size: 14px;
-  box-sizing: border-box;
-  transition: all 0.2s ease;
-}
-
-.erro {
-  color: red;
-  font-size: 13px;
-  margin-bottom: 10px;
-}
-
-.sucesso {
-  color: green;
-  font-size: 13px;
-  margin-bottom: 10px;
-}
-
-.button {
-  width: 100%;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 16px;
-  transition: all 0.3s ease;
-}
-
-.button:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.linkText {
-  margin-top: 15px;
-  font-size: 14px;
-}
-
-.link {
-  color: #007bff;
-  cursor: pointer;
-  font-weight: bold;
-  text-decoration: underline;
+  .loginButton {
+    font-size: 0.9rem;
+    padding: 9px;
+  }
 }

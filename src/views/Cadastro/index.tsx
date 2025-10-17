@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserPlus, Eye, EyeOff } from "lucide-react";
 import styles from "./index.module.css";
-
-
+import logo from "../../assets/logo.png";
+import background from "../../assets/background.png";
 
 const Cadastro: React.FC = () => {
   const navigate = useNavigate();
@@ -17,7 +18,8 @@ const Cadastro: React.FC = () => {
 
   const [erro, setErro] = useState("");
   const [mensagem, setMensagem] = useState("");
-  const [hoverButton, setHoverButton] = useState(false);
+  const [senhaVisivel, setSenhaVisivel] = useState(false);
+  const [confirmarSenhaVisivel, setConfirmarSenhaVisivel] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,99 +28,125 @@ const Cadastro: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!formData.nome || !formData.email || !formData.cpf || !formData.senha || !formData.confirmarSenha) {
+      setErro("Preencha todos os campos!");
+      setMensagem("");
+      return;
+    }
+
     if (formData.senha !== formData.confirmarSenha) {
       setErro("As senhas não coincidem!");
       setMensagem("");
       return;
     }
 
-    if (!formData.nome || !formData.email || !formData.cpf || !formData.senha) {
-      setErro("Preencha todos os campos!");
-      setMensagem("");
-      return;
-    }
-
     console.log("Dados enviados:", formData);
-
     setErro("");
     setMensagem("Cadastro realizado com sucesso!");
+
     setTimeout(() => navigate("/login"), 1500);
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.card}>
-        <h2 className={styles.title}>Crie sua conta</h2>
+    <div
+      className={styles.container}
+      style={{ backgroundImage: `url(${background})` }}
+    >
+      <div className={styles.containerLogin}>
+        <img src={logo} alt="Logo SuculentuS" className={styles.logo} />
+
+        <div className={styles.header}>
+          <UserPlus size={28} strokeWidth={3} /> Cadastro
+        </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>
-          <input
-            type="text"
-            name="nome"
-            placeholder="Nome completo"
-            value={formData.nome}
-            onChange={handleChange}
-            className={styles.input}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="E-mail"
-            value={formData.email}
-            onChange={handleChange}
-            className={styles.input}
-            required
-          />
-          <input
-            type="text"
-            name="cpf"
-            placeholder="CPF"
-            value={formData.cpf}
-            onChange={handleChange}
-            className={styles.input}
-            required
-          />
-          <input
-            type="password"
-            name="senha"
-            placeholder="Senha"
-            value={formData.senha}
-            onChange={handleChange}
-            className={styles.input}
-            required
-          />
-          <input
-            type="password"
-            name="confirmarSenha"
-            placeholder="Confirmar senha"
-            value={formData.confirmarSenha}
-            onChange={handleChange}
-            className={styles.input}
-            required
-          />
+          <div className={styles.inputGroup}>
+            <input
+              type="text"
+              name="nome"
+              placeholder="Nome completo"
+              value={formData.nome}
+              onChange={handleChange}
+            />
+          </div>
 
-          {erro && <p className={styles.erro}>{erro}</p>}
-          {mensagem && <p className={styles.sucesso}>{mensagem}</p>}
+          <div className={styles.inputGroup}>
+            <input
+              type="email"
+              name="email"
+              placeholder="E-mail"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </div>
 
-          <button
-            type="submit"
-            className={`${styles.button} ${hoverButton ? styles.buttonHover : ""}`}
-            onMouseEnter={() => setHoverButton(true)}
-            onMouseLeave={() => setHoverButton(false)}
-          >
+          <div className={styles.inputGroup}>
+            <input
+              type="text"
+              name="cpf"
+              placeholder="CPF"
+              value={formData.cpf}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className={styles.inputGroup}>
+            <input
+              type={senhaVisivel ? "text" : "password"}
+              name="senha"
+              placeholder="Senha"
+              value={formData.senha}
+              onChange={handleChange}
+            />
+            <span
+              className={styles.showPasswordIcon}
+              onClick={() => setSenhaVisivel(!senhaVisivel)}
+            >
+              {senhaVisivel ? <EyeOff size={20} /> : <Eye size={20} />}
+            </span>
+          </div>
+
+          <div className={styles.inputGroup}>
+            <input
+              type={confirmarSenhaVisivel ? "text" : "password"}
+              name="confirmarSenha"
+              placeholder="Confirmar senha"
+              value={formData.confirmarSenha}
+              onChange={handleChange}
+            />
+            <span
+              className={styles.showPasswordIcon}
+              onClick={() => setConfirmarSenhaVisivel(!confirmarSenhaVisivel)}
+            >
+              {confirmarSenhaVisivel ? <EyeOff size={20} /> : <Eye size={20} />}
+            </span>
+          </div>
+
+          {erro && <div className={styles.errorMessage}>{erro}</div>}
+          {mensagem && (
+            <div
+              className={styles.errorMessage}
+              style={{ color: "#00b050" }}
+            >
+              {mensagem}
+            </div>
+          )}
+
+          <button type="submit" className={styles.loginButton}>
             Cadastrar
           </button>
         </form>
 
-        <p className={styles.linkText}>
-          Já tem uma conta?{" "}
-          <span
-            className={styles.link}
+        <div className={styles.footer}>
+          <span>Já tem uma conta?</span>
+          <button
+            type="button"
+            className={styles.registerButton}
             onClick={() => navigate("/login")}
           >
             Voltar para Login
-          </span>
-        </p>
+          </button>
+        </div>
       </div>
     </div>
   );
