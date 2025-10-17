@@ -81,7 +81,6 @@ export const HomeView = () => {
               </div>
             ))
           }
-
         </div>
       </div>
     </div>
