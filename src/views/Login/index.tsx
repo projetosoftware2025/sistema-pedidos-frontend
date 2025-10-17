@@ -19,7 +19,7 @@ export const LoginView: React.FC = () => {
       return;
     }
     console.log('Login:', { usuario, senha });
-    navigate('/home');
+    navigate('/');
   };
 
   return (

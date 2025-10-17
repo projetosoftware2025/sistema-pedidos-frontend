@@ -2,29 +2,70 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   min-height: 100vh;
   width: 100%;
   background: rgb(250, 250, 250);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  position: relative;
-  overflow: hidden;
   padding: 0 20px;
   box-sizing: border-box;
 }
 
 .containerBox {
-  height: 90vh;
+  margin-top: 20px;
   width: 100%;
-  padding: 0 20px;
 }
 
+.inputGroup {
+  display: flex;
+  justify-content: center;
+  align-items: stretch; /* garante que os filhos ocupem mesma altura */
+   margin: 0 auto 20px auto;
+  width: 100%;
+  max-width: 800px;
+}
+
+.input {
+  flex: 1;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 10px 0 0 10px;
+  border: 1.5px solid #ddd;
+  outline: none;
+  background: #fafafa;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  border-radius: 0 10px 10px 0;
+  background: #ff6600;
+  border: 1.5px solid #ddd;
+  border-left: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.button svg {
+  height: 60%;
+  width: 60%;
+}
+
+
+.button:hover {
+  filter: brightness(1.1);
+}
+
+/* Cards */
 .containerItens {
   display: grid;
-  grid-template-columns: repeat(6, 1fr ) ;
-  gap: 20px; /* Mais espaçamento entre os itens */
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
   width: 100%;
 }
 
@@ -33,59 +74,65 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 40px 20px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   border-radius: 15px;
   height: 100px;
   color: white;
-  background: #2b26b6;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.2s, filter 0.2s;
+  position: relative;
+  overflow: hidden;
   text-align: center;
 }
 
+.containerItem::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 15px;
+  z-index: 0;
+}
+
+.itemText {
+  position: relative;
+  z-index: 1;
+}
+
 .containerItem:hover {
-  transform: scale(1.01);
+  transform: scale(1.03);
+  filter: brightness(1.1);
 }
 
-/* Telas médias */
-@media (max-width: 1024px) {
-  .containerItens {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  }
-
-  .containerItem {
-    padding: 30px 15px;
-    height: 90px;
-    font-size: 18px;
-  }
-}
-
-/* Telas pequenas */
+/* Responsividade */
 @media (max-width: 768px) {
-  .containerItens {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  .inputGroup {
+    max-width: 100%;
   }
-
+  .input {
+    font-size: 0.9rem;
+    max-width: 260px;
+  }
+  .button {
+    width: 45px;
+  }
   .containerItem {
-    padding: 25px 10px;
-    height: 80px;
+    height: 90px;
     font-size: 16px;
   }
 }
 
-/* Celulares muito pequenos */
 @media (max-width: 480px) {
-  .containerItens {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  }
-
   .containerItem {
-    padding: 20px 8px;
-    height: 70px;
+    height: 80px;
     font-size: 14px;
   }
 }
