@@ -12,12 +12,26 @@ export const SidebarComponent: React.FC<SidebarProps> = ({ isOpen }) => {
     <>
       <div className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
         <ul>
-          <li onClick={() => {
-            navigate("/meus-pedidos")
-          }}>Meus Pedidos</li>
-          <li onClick={() => {
-            navigate("/login")
-          }}>Sair</li>
+
+          {window.innerWidth >= 768 ? 
+          // desktop
+          <>
+            <li onClick={() => {
+              navigate("/")
+            }}>Gerenciamento de Pedidos</li>
+            <li onClick={() => {
+              navigate("/login")
+            }}>Sair</li>
+          </>
+            : 
+            // mobile
+          <>
+            <li onClick={() => {
+              navigate("/meus-pedidos")
+            }}>Meus Pedidos</li>
+          </>
+
+          }
         </ul>
       </div>
     </>
