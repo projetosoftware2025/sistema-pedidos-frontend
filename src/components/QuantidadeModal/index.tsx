@@ -39,8 +39,8 @@ export const QuantidadeModal: React.FC<QuantidadeModalProps> = ({
         </div>
 
         <div className={styles.actions}>
-          <button onClick={() => onConfirm(quantidade)}>Adicionar</button>
           <button onClick={onClose}>Cancelar</button>
+          <button onClick={() => onConfirm(quantidade)}>Adicionar</button>
         </div>
       </div>
     </div>

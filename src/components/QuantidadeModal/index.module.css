@@ -1,60 +1,127 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.6); /* Fundo mais escuro para maior foco */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999;
+  /* Novo: Adiciona uma transição para a abertura ser mais suave */
+  transition: opacity 0.3s ease; 
 }
 
 .modal {
   background: white;
-  padding: 20px;
+  padding: 24px; /* Mais padding */
   border-radius: 16px;
-  width: 90%;
-  max-width: 320px;
+  width: 80%;
+  max-width: 350px; /* Pouco mais largo */
   text-align: center;
+  /* Novo: Sombra mais pronunciada e elegante */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); 
+  /* Novo: Efeito de entrada */
+  transform: scale(1);
+  transition: transform 0.3s ease;
+}
+
+.modal h3 {
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 1.5rem;
+}
+
+.modal p {
+  color: #666;
+  margin-bottom: 15px;
 }
 
 .modal img {
   width: 100%;
-  max-height: 180px;
+  max-height: 200px; /* Pouco mais alto */
   object-fit: cover;
   border-radius: 12px;
-  margin: 10px 0;
+  margin: 15px 0; /* Mais margem */
 }
 
 
+/* --- BOTÕES DE QUANTIDADE (+ / -) --- */
 .controls {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 16px;
-  margin: 10px 0;
+  margin: 15px 0;
 }
 
 .controls button {
-  width: 32px;
-  height: 32px;
-  font-size: 18px;
+  /* Estilização para botões circulares */
+  width: 36px;
+  height: 36px;
+  font-size: 20px;
+  font-weight: bold;
+  border: 2px solid #ff6600; /* Borda laranja */
+  border-radius: 50%; /* Torna-os circulares */
+  background: white; /* Fundo branco */
+  color: #ff6600; /* Texto laranja */
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  
+  /* Efeito de click */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+.controls button:hover {
+  background: #fff0e8; /* Fundo mais claro ao passar o mouse */
+}
+
+.controls button:active {
+  background: #ff6600; /* Fundo laranja ao clicar */
+  color: white;
+  transform: scale(0.95);
+  box-shadow: none;
+}
+
+.controls span {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* --- BOTÕES DE AÇÃO (Finalizar e Fechar) --- */
 .actions {
   display: flex;
-  justify-content: space-around;
-  margin-top: 16px;
+  justify-content: space-between; /* Melhor espaçamento */
+  margin-top: 25px;
+  gap: 10px;
 }
 
 .actions button {
-  background: #ff6600;
+  flex: 1; /* Faz os botões ocuparem a mesma largura */
   border: none;
-  padding: 8px 16px;
+  padding: 10px 18px;
   color: white;
   border-radius: 8px;
   cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background 0.2s;
 }
 
-.actions button:last-child {
-  background: #999;
+/* Botão principal (Adicionar ao Carrinho/Finalizar) */
+.actions button:last-child { 
+  background: #ff6600;
+}
+
+.actions button:last-child:hover {
+  background: #e55c00;
+}
+
+/* Botão secundário (Fechar) */
+.actions button:first-child {
+  background: #ccc;
+  color: #333;
+}
+
+.actions button:first-child:hover {
+  background: #b3b3b3;
 }

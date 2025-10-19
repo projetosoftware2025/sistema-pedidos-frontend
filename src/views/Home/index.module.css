@@ -113,14 +113,19 @@
   filter: brightness(1.1);
 }
 
+/* Área scrollável para produtos */
 .listaProdutos {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 5px;
+  margin-top: 10px;
   width: 100%;
+  max-height: calc(100vh - 400px); /* ajusta conforme header + categorias */
+  overflow-y: auto;
+  padding-right: 8px; /* evita overflow com scrollbar */
 }
 
+/* Cada produto ocupa toda a largura (horizontal) */
 .produto {
   display: flex;
   align-items: center;
