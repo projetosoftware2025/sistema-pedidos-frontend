@@ -1,12 +1,6 @@
 
 export interface UserInterface {
-  usuario_id?: number;
-  nome: string;
-  cpf?: string;
+  logado: boolean;
   usuario: string;
-  telefone: string;
   email: string;
-  senha?: string;
-  admin?: number;
-  token?: string;
 }

@@ -1,12 +1,28 @@
-.container{
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    gap: 20px;
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px;
+  background: #f9f9f9;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
-.header{
-    display: flex;
-    gap: 30px;
-    align-items: center;
+.header {
+  display: flex;
+  align-items: center;
+  padding: 16px 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  border-bottom: 1px solid #ddd;
+}
+
+.toBack {
+  cursor: pointer;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
 }

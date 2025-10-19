@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import { RouterProvider } from "react-router-dom";
 import { AppRoutes } from "./routes/AppRoutes";
+import { ToastContainer } from "react-toastify";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -11,6 +12,16 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <Provider store={store}>
+    <ToastContainer
+      position="top-right"
+      autoClose={3000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      pauseOnHover
+      draggable
+      theme="colored"
+    />
     <RouterProvider router={AppRoutes} />
   </Provider>
 );

@@ -3,6 +3,7 @@ import { LoginView } from "../views/Login";
 import { HomeView } from "../views/Home";
 import CadastroView from "../views/Cadastro";
 import { MeusPedidos } from "../views/MeusPedidos";
+import { Carrinho } from "../views/Carrinho";
 
 export const AppRoutes = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ export const AppRoutes = createBrowserRouter([
   {
     path: "/meus-pedidos", 
     element: <MeusPedidos />, 
+  },
+  {
+    path: "/carrinho", 
+    element: <Carrinho />, 
   },
   {
     path: "*",

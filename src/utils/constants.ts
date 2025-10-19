@@ -1,0 +1,1 @@
+export const URL_BASE = "https://sistema-pedidos-users-api.onrender.com/usuario";

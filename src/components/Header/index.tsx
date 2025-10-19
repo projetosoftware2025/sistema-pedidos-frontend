@@ -9,6 +9,7 @@ import { tokenService } from "../../app/services/user/loginByTokenUser";
 import { ShoppingBag, Menu, MarsStroke, X } from "lucide-react";
 import logo from "../../assets/logo.png";
 import { setSideBar } from "../../redux/reducers/appReducer";
+import { CartItemInterface } from "../../redux/reducers/cartReducer";
 
 export const HeaderComponent: React.FC = () => {
   const navigate = useNavigate();
@@ -17,6 +18,10 @@ export const HeaderComponent: React.FC = () => {
 
   const user: UserInterface = useSelector(
     (state: RootState) => state.auth.user
+  );
+
+  const cartProdutos: CartItemInterface[] = useSelector(
+    (state: RootState) => state.cart.cartProdutos
   );
 
   useEffect(() => {
@@ -74,9 +79,11 @@ export const HeaderComponent: React.FC = () => {
           <img src={logo} alt="Logo SuculentuS" className={styles.logo} />
         </div>
 
-        <div className={styles.cartContainer}>
+        <div className={styles.cartContainer} onClick={()=>{
+          navigate("/carrinho")
+        }}>
           <ShoppingBag size={28} color="white" />
-          <div className={styles.cartNumber}>2</div>
+          <div className={styles.cartNumber}>{cartProdutos.length}</div>
         </div>
       </div>
 
