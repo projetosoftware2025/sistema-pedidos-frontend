@@ -199,7 +199,7 @@ export const HomeView = () => {
 
     // Se o campo estiver vazio, volta a lista completa
     if (!termo.trim()) {
-      setProdutosLista(produtos.filter((produto) => { return produto.categoriaId == 1 })); // supondo que você tenha guardado a lista original
+      setProdutosLista(produtos.filter((produto) => { return produto.categoriaId == categotiaSelecionada.id })); // supondo que você tenha guardado a lista original
       return;
     }
 
