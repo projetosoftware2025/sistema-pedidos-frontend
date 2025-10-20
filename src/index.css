@@ -4,7 +4,16 @@
   min-height: 100vh;
 }
 
-html, body {
+/* global resets úteis */
+:root,
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
   height: 100vh;
   margin: 0;
   padding: 0;

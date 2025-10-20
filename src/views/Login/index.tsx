@@ -15,7 +15,7 @@ export const LoginView: React.FC = () => {
   const handleLogin = async () => {
     setError('');
     if (!usuario || !senha) {
-      setError('Preencha usuário e senha');
+      setError('Preencha e-mail e senha');
       return;
     }
     console.log('Login:', { usuario, senha });
@@ -48,8 +48,7 @@ export const LoginView: React.FC = () => {
               onFocus={() => setError('')}
               onChange={(e) => setUsuario(e.target.value)}
               className={error ? styles.inputError : ''}
-              placeholder="Usuário"
-              autoFocus
+              placeholder="E-mail"
             />
           </div>
 
@@ -84,7 +83,7 @@ export const LoginView: React.FC = () => {
             className={styles.registerButton}
             onClick={() => navigate('/cadastro')}
           >
-            Criar Cadastro
+            Criar conta
           </button>
         </div>
       </div>

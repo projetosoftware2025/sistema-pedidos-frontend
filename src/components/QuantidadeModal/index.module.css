@@ -1,127 +1,161 @@
+/* Overlay escura com fade-in */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6); /* Fundo mais escuro para maior foco */
+  background: rgba(0,0,0,0.65);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999;
-  /* Novo: Adiciona uma transição para a abertura ser mais suave */
-  transition: opacity 0.3s ease; 
+  animation: fadeIn 0.25s ease;
 }
 
+/* Modal principal */
 .modal {
-  background: white;
-  padding: 24px; /* Mais padding */
-  border-radius: 16px;
-  width: 80%;
-  max-width: 350px; /* Pouco mais largo */
+  background: #fff;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 380px;
   text-align: center;
-  /* Novo: Sombra mais pronunciada e elegante */
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); 
-  /* Novo: Efeito de entrada */
-  transform: scale(1);
-  transition: transform 0.3s ease;
+  padding: 24px 20px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  transform: scale(0.95);
+  animation: popIn 0.25s forwards;
 }
 
 .modal h3 {
+  font-size: 1.6rem;
   color: #333;
-  margin-bottom: 8px;
-  font-size: 1.5rem;
+  margin-bottom: 12px;
+  font-weight: 700;
 }
 
-.modal p {
-  color: #666;
-  margin-bottom: 15px;
-}
-
-.modal img {
+.produtoImg {
   width: 100%;
-  max-height: 200px; /* Pouco mais alto */
+  height: 200px;
   object-fit: cover;
-  border-radius: 12px;
-  margin: 15px 0; /* Mais margem */
+  border-radius: 16px;
+  margin: 15px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
+.preco {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ff6600;
+  margin-bottom: 20px;
+}
 
-/* --- BOTÕES DE QUANTIDADE (+ / -) --- */
+/* Controles de quantidade */
 .controls {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 16px;
-  margin: 15px 0;
+  margin-bottom: 25px;
 }
 
 .controls button {
-  /* Estilização para botões circulares */
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ff6600;
+  background: white;
+  color: #ff6600;
   font-size: 20px;
   font-weight: bold;
-  border: 2px solid #ff6600; /* Borda laranja */
-  border-radius: 50%; /* Torna-os circulares */
-  background: white; /* Fundo branco */
-  color: #ff6600; /* Texto laranja */
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  
-  /* Efeito de click */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
 }
 
 .controls button:hover {
-  background: #fff0e8; /* Fundo mais claro ao passar o mouse */
+  background: #fff0e8;
 }
 
 .controls button:active {
-  background: #ff6600; /* Fundo laranja ao clicar */
+  background: #ff6600;
   color: white;
-  transform: scale(0.95);
+  transform: scale(0.9);
   box-shadow: none;
 }
 
 .controls span {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #333;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #333;
 }
 
-/* --- BOTÕES DE AÇÃO (Finalizar e Fechar) --- */
+/* Botões de ação */
 .actions {
   display: flex;
-  justify-content: space-between; /* Melhor espaçamento */
-  margin-top: 25px;
-  gap: 10px;
+  gap: 12px;
 }
 
 .actions button {
-  flex: 1; /* Faz os botões ocuparem a mesma largura */
+  flex: 1;
+  padding: 12px 0;
   border: none;
-  padding: 10px 18px;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
+  border-radius: 12px;
   font-size: 1rem;
-  transition: background 0.2s;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-/* Botão principal (Adicionar ao Carrinho/Finalizar) */
-.actions button:last-child { 
+/* Cancelar */
+.actions button:first-child {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.actions button:first-child:hover {
+  background: #cfcfcf;
+}
+
+/* Adicionar */
+.actions button:last-child {
   background: #ff6600;
+  color: white;
 }
 
 .actions button:last-child:hover {
   background: #e55c00;
 }
 
-/* Botão secundário (Fechar) */
-.actions button:first-child {
-  background: #ccc;
-  color: #333;
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.actions button:first-child:hover {
-  background: #b3b3b3;
+@keyframes popIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+  .modal {
+    padding: 20px 15px;
+  }
+
+  .produtoImg {
+    height: 160px;
+  }
+
+  .controls button {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .controls span {
+    font-size: 1.2rem;
+  }
+
+  .actions button {
+    padding: 10px 0;
+    font-size: 0.95rem;
+  }
 }

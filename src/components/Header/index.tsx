@@ -10,8 +10,13 @@ import { ShoppingBag, Menu, MarsStroke, X } from "lucide-react";
 import logo from "../../assets/logo.png";
 import { setSideBar } from "../../redux/reducers/appReducer";
 import { CartItemInterface } from "../../redux/reducers/cartReducer";
+import { DeviceType } from "../../app/models/types/DeviceType";
 
-export const HeaderComponent: React.FC = () => {
+interface HeaderProps {
+  device: DeviceType
+}
+
+export const HeaderComponent: React.FC<HeaderProps> = ({ device }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showSideBar, setShowSideBar] = useState(false);
@@ -79,12 +84,12 @@ export const HeaderComponent: React.FC = () => {
           <img src={logo} alt="Logo SuculentuS" className={styles.logo} />
         </div>
 
-        <div className={styles.cartContainer} onClick={()=>{
-          navigate("/carrinho")
-        }}>
-          <ShoppingBag size={28} color="white" />
-          <div className={styles.cartNumber}>{cartProdutos.length}</div>
-        </div>
+        {device == "mobile" ?
+          <div className={styles.cartContainer} onClick={() => {navigate("/carrinho")}}>
+            <ShoppingBag size={28} color="white" />
+            <div className={styles.cartNumber}>{cartProdutos.length}</div>
+          </div>
+        : null}
       </div>
 
     </>

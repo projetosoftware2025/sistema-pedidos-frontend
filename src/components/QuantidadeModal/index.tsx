@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "./index.module.css";
+import { formatarReal } from "../../utils/formatarReal";
 
 interface QuantidadeModalProps {
   produto: {
@@ -23,17 +24,12 @@ export const QuantidadeModal: React.FC<QuantidadeModalProps> = ({
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <h3>{produto.titulo}</h3>
-        <img src={produto.url} alt={produto.titulo} />
-        <p>Preço: R$ {produto.preco.toFixed(2)}</p>
+        <img src={produto.url} alt={produto.titulo} className={styles.produtoImg}/>
+        <p className={styles.preco}>Valor: {formatarReal(produto.preco)}</p>
+        <p className={styles.preco}>Total: {formatarReal(produto.preco * quantidade)}</p>
 
         <div className={styles.controls}>
-          <button
-            onClick={() =>
-              setQuantidade((prev) => (prev > 1 ? prev - 1 : prev))
-            }
-          >
-            -
-          </button>
+          <button onClick={() => setQuantidade((prev) => (prev > 1 ? prev - 1 : prev))}>-</button>
           <span>{quantidade}</span>
           <button onClick={() => setQuantidade((prev) => prev + 1)}>+</button>
         </div>

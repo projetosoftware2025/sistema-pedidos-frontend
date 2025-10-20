@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart, CartItemInterface, removeFromCart, removeOneFromCart } from "../../redux/reducers/cartReducer";
 import { RootState } from "../../redux/store";
 import { toast } from "react-toastify";
+import { formatarReal } from "../../utils/formatarReal";
+import { QuantidadeModal } from "../../components/QuantidadeModal";
 
 export const Carrinho = () => {
     const navigate = useNavigate();
@@ -51,10 +53,15 @@ export const Carrinho = () => {
                                 <div className={styles.produtoInfo}>
                                     <div>{produto.titulo}</div>
                                     <div>{produto.descricao}</div>
-                                    <div>R$ {produto.preco.toFixed(2)}</div>
+                                    <div>{formatarReal(produto.preco)}</div>
                                 </div>
                                 <div className={styles.controles}>
-                                    <button onClick={() => dispatch(removeOneFromCart(produto.id))}>-</button>
+                                    <button onClick={() => {
+                                        dispatch(removeOneFromCart(produto.id))
+                                        if (produto.quantidade == 1) {
+                                            toast.info("Produto removido do carrinho!");
+                                        }
+                                    }}>-</button>
                                     <span>{produto.quantidade}</span>
                                     <button onClick={() => dispatch(addToCart({ ...produto, quantidade: 1 }))}>+</button>
                                     <span
