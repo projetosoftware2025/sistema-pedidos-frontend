@@ -25,7 +25,7 @@ export const LoginView: React.FC = () => {
   return (
     <div
       className={styles.container}
-      style={{ backgroundImage: `url(${background})` }} // adiciona o padrão de fundo
+      style={{ backgroundImage: `url(${background})` }}
     >
       <div className={styles.containerLogin}>
         <img src={logo} alt="Logo SuculentuS" className={styles.logo} />
@@ -69,7 +69,19 @@ export const LoginView: React.FC = () => {
             </span>
           </div>
 
+          {/* Mensagem de erro */}
           {error && <div className={styles.errorMessage}>{error}</div>}
+
+          {/* Link Esqueci minha senha */}
+          <div className={styles.forgotPasswordContainer}>
+            <button
+              type="button"
+              className={styles.forgotPasswordButton}
+              onClick={() => navigate('/RecuperarAcesso')}
+            >
+              Esqueci minha senha
+            </button>
+          </div>
 
           <button type="submit" className={styles.loginButton}>
             Entrar

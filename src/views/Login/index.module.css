@@ -18,11 +18,11 @@
 /* --- Card de login --- */
 .containerLogin {
   background: rgba(255, 255, 255, 0.95);
-  padding: 40px 35px; /* Mais espaçamento no desktop */
+  padding: 40px 35px;
   border-radius: 20px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
   width: 100%;
-  max-width: 600px; /* Bem maior no desktop */
+  max-width: 600px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -44,7 +44,7 @@
 
 /* Cabeçalho com ícone */
 .header {
-  font-size: 2rem; /* Maior no desktop */
+  font-size: 2rem;
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -136,6 +136,31 @@ input:focus {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-3px); }
   75% { transform: translateX(3px); }
+}
+
+/* --- Esqueci minha senha --- */
+.forgotPasswordContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: -5px;
+  margin-bottom: 10px;
+}
+
+.forgotPasswordButton {
+  background: none;
+  border: none;
+  color: #ff6600;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.forgotPasswordButton:hover {
+  color: #e52e71;
+  text-decoration: underline;
+  transform: translateY(-1px);
 }
 
 /* Botão de login */
@@ -233,5 +258,8 @@ input:focus {
   .loginButton {
     font-size: 0.9rem;
     padding: 9px;
+  }
+  .forgotPasswordButton {
+    font-size: 0.85rem;
   }
 }
