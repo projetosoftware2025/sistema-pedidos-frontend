@@ -11,7 +11,7 @@ export default function RecuperarAcesso() {
     e.preventDefault();
 
     if (email === "" || email !== "teste@exemplo.com") {
-      setError("• E-mail não cadastrado");
+      setError("E-mail não cadastrado");
     } else {
       setError("");
       alert("E-mail encontrado! Código enviado.");

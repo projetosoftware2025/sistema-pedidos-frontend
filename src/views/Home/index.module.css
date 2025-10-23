@@ -59,34 +59,41 @@
   box-shadow: 0 0 5px rgba(255, 102, 0, 0.2);
 }
 
-/* --- CATEGORIAS --- */
 .containerItens {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  display: flex;
+  flex-wrap: nowrap;      /* itens na mesma linha */
   gap: 10px;
   width: 100%;
   padding: 0 16px;
   box-sizing: border-box;
-  overflow: hidden;
-  justify-items: center; /* centraliza os itens na coluna */
+  overflow-x: auto;       /* scroll horizontal */
+  -webkit-overflow-scrolling: touch; /* suaviza no mobile */
+  scroll-behavior: smooth;
+}
+
+.containerItens::-webkit-scrollbar {
+  height: 6px;
+}
+
+.containerItens::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 3px;
 }
 
 .containerItem {
+  flex: 0 0 auto; /* importante */
+  width: 120px;   /* largura fixa para scroll */
+  height: 100px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: 12px;
   font-weight: bold;
   border-radius: 15px;
-  height: 100px;
-  width: 100%; /* garante que respeite o grid */
-  max-width: 130px; /* evita estourar a tela */
   color: white;
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
   cursor: pointer;
   transition: transform 0.2s, filter 0.2s;
   position: relative;
@@ -94,23 +101,6 @@
   text-align: center;
 }
 
-.containerItem::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 15px;
-}
-
-.itemText {
-  position: relative;
-  z-index: 1;
-}
-
-.containerItem:hover {
-  transform: scale(1.05);
-  filter: brightness(1.1);
-}
 
 /* --- ÁREA SCROLLÁVEL DE PRODUTOS --- */
 .produtosWrapper {
