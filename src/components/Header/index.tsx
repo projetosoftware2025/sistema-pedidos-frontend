@@ -19,7 +19,7 @@ interface HeaderProps {
 export const HeaderComponent: React.FC<HeaderProps> = ({ device }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [showSideBar, setShowSideBar] = useState(false);
+  const isSidebarOpen = useSelector((state: RootState) => state.app.isSidebarOpen);
 
   const user: UserInterface = useSelector(
     (state: RootState) => state.auth.user
@@ -73,11 +73,10 @@ export const HeaderComponent: React.FC<HeaderProps> = ({ device }) => {
         <div
           className={styles.menuIcon}
           onClick={() => {
-            setShowSideBar(!showSideBar);
-            dispatch(setSideBar(!showSideBar));
+            dispatch(setSideBar(true));
           }}
         >
-          {showSideBar ? <X size={28} color="white" /> : <Menu size={28} color="white" />}
+          {isSidebarOpen ? <X size={28} color="white" /> : <Menu size={28} color="white" />}
         </div>
 
         <div className={styles.logoContainer}>

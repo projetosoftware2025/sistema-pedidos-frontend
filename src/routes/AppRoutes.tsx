@@ -31,19 +31,19 @@ export const AppRoutes = createBrowserRouter([
     element: <Carrinho />, 
   },
   {
-    path: "/RecuperarAcesso",
+    path: "/recuperar-acesso",
     element: <RecuperarAcesso />, 
   },
   {
-    path: "/CodigoRecuperar",
+    path: "/recuperar-codigo",
     element: <CodigoRecuperar />, 
   },
   {
-    path: "/RedefinirSenha",
+    path: "/redefinir-senha",
     element: <RedefinirSenha />, 
   },
 {
-    path: "/TeladeFinalizacao",
+    path: "/tela-finalizado",
     element: <TeladeFinalizacao />, 
   },
   {

@@ -17,6 +17,7 @@ import { QuantidadeModal } from "../../components/QuantidadeModal/index";
 import { addToCart } from "../../redux/reducers/cartReducer";
 import { DeviceType } from "../../app/models/types/DeviceType";
 import { formatarReal } from "../../utils/formatarReal";
+import { setSideBar } from "../../redux/reducers/appReducer";
 
 
 interface ItemImage {
@@ -225,8 +226,10 @@ export const HomeView = () => {
       <div className={styles.containerBox}>
         <SidebarComponent
           isOpen={isSidebarOpen}
+          onClose={() => dispatch(setSideBar(false))}
           device={device}
         />
+
         {device == "mobile" ?
           <>
             <div className={styles.inputGroup}>
@@ -242,16 +245,18 @@ export const HomeView = () => {
             </div>
 
             <div className={styles.containerItens}>
-              {
-                itens.map((item) => (
-                  <div key={item.id} className={styles.containerItem} style={{ backgroundImage: `url(${item.imagem})` }} onClick={() => {
-                    selecionarCategoria(item);
-                  }}>
-                    <span className={styles.itemText}>{item.nome}</span>
-                  </div>
-                ))
-              }
+              {itens.map((item) => (
+                <div
+                  key={item.id}
+                  className={styles.containerItem}
+                  style={{ backgroundImage: `url(${item.imagem})` }}
+                  onClick={() => selecionarCategoria(item)}
+                >
+                  <span className={styles.itemText}>{item.nome}</span>
+                </div>
+              ))}
             </div>
+
 
             <div>
               <div style={{
@@ -259,7 +264,7 @@ export const HomeView = () => {
                 marginBottom: "8px",
                 fontSize: "1.2rem",
                 fontWeight: "bold",
-                paddingLeft:  "16px"
+                paddingLeft: "16px"
               }}>{categotiaSelecionada!.nome}</div>
 
 
