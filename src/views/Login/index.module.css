@@ -121,7 +121,7 @@ input:focus {
 .errorMessage {
   color: #e52e71;
   font-size: 0.9rem;
-  text-align: center;
+  text-align: start;
   animation: shake 0.3s;
 }
 

@@ -6,6 +6,7 @@ import logo from '../../assets/logo.png';
 import background from '../../assets/background.png';
 import { URL_BASE } from '../../utils/constants';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 export const LoginView: React.FC = () => {
   const navigate = useNavigate();
@@ -15,6 +16,10 @@ export const LoginView: React.FC = () => {
   const [error, setError] = useState('');
 
    const handleLogin = async (email: string, senha: string) => {
+    if(!email || !senha){
+      setError("Preencha todos os campos")
+      return
+    }
     try {
       const response = await axios.post(`${URL_BASE}/usuario/login`, {
         email,
@@ -22,10 +27,8 @@ export const LoginView: React.FC = () => {
       });
 
       if (response.status === 200) {
-        //login realizado com sucesso
-        const token = response.data.token; // API retorna token
-        localStorage.setItem('token', token); // salva token no localStorage
-        navigate('/'); // redireciona para a página principal
+        toast.success("Login realizado com sucesso!");
+        navigate('/');
       } else {
         setError('Usuário ou senha incorretos');
       }
