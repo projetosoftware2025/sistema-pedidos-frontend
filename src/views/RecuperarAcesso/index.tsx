@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import styles from "./index.module.css";
 import background from "../../assets/background.png";
 import logo from "../../assets/logo.png";
+import { useNavigate } from "react-router-dom";
 
 export default function RecuperarAcesso() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -15,6 +17,7 @@ export default function RecuperarAcesso() {
     } else {
       setError("");
       alert("E-mail encontrado! Código enviado.");
+      navigate("/recuperar-codigo")
     }
   };
 

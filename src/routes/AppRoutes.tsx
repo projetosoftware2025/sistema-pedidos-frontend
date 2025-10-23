@@ -39,7 +39,7 @@ export const AppRoutes = createBrowserRouter([
     element: <CodigoRecuperar />, 
   },
   {
-    path: "/redefinir-senha",
+    path: "/nova-senha",
     element: <RedefinirSenha />, 
   },
 {

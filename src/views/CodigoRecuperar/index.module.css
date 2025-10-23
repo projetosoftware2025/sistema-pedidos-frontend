@@ -5,7 +5,6 @@
   align-items: center;
   height: 100vh;
   padding: 16px;
-
   background-image:
     linear-gradient(rgba(255, 138, 0, 0.85), rgba(229, 46, 113, 0.85)),
     url('../../assets/background.png');
@@ -21,7 +20,7 @@
   border-radius: 22px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
   width: 100%;
-  max-width: 340px;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -32,19 +31,13 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* === LOGO === */
 .logo {
-  width: 140px;
+  width: 100px;
   height: auto;
   margin-bottom: 0.5rem;
   filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.25));
@@ -52,19 +45,11 @@
   animation: logoFade 0.8s ease forwards;
 }
 
-.logo:hover {
-  transform: scale(1.05);
-}
+.logo:hover { transform: scale(1.05); }
 
 @keyframes logoFade {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* === TEXTO === */
@@ -78,6 +63,7 @@
   font-size: 0.85rem;
   color: #444;
   line-height: 1.4;
+  max-width: 260px;
   margin-bottom: 0.8rem;
   text-align: center;
 }
@@ -91,43 +77,35 @@
   width: 100%;
 }
 
-/* === INPUTS DO CÓDIGO === */
-.codeInputs {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-  margin-bottom: 0.5rem;
-}
-
+/* === INPUT DO CÓDIGO ÚNICO === */
 .codeInput {
-  width: 45px;
+  width: 100%;
+  max-width: 220px;
   height: 48px;
-  font-size: 1.4rem;
+  font-size: 1rem;
   font-weight: 600;
-  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif; /* 👈 nova fonte aplicada */
-  text-align: center;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  /* text-align: center; */
   border: 2px solid #00b050;
   border-radius: 10px;
   outline: none;
   transition: all 0.25s ease;
-  background-color: #ffffff;
-  color: #060606;
+  background-color: #fff;
+  color: #333;
 }
-
 
 .codeInput:focus {
   border-color: #f15a24;
-  background-color: #fff;
   box-shadow: 0 0 8px rgba(241, 90, 36, 0.4);
-  transform: scale(1.08);
+  transform: scale(1.05);
 }
 
-/* === ERRO === */
 .codeInputError {
   border-color: #ff3b3b !important;
   animation: shake 0.3s ease;
 }
 
+/* === ERRO === */
 .errorMessage {
   color: #ff3b3b;
   font-weight: 600;
@@ -168,7 +146,7 @@
   padding: 12px 0;
   background: linear-gradient(90deg, #ff8a00, #e52e71);
   border: none;
-  border-radius: 25px;
+  border-radius: 10px;
   color: #fff;
   font-weight: 700;
   font-size: 1rem;
@@ -184,32 +162,10 @@
 
 /* === RESPONSIVO === */
 @media (max-width: 400px) {
-  .containerLogin {
-    padding: 22px 16px;
-    max-width: 300px;
-  }
-
-  .logo {
-    width: 100px;
-  }
-
-  .codeInput {
-    width: 40px;
-    height: 45px;
-    font-size: 1.2rem;
-    
-  }
-
-  .header {
-    font-size: 1.1rem;
-  }
-
-  .description {
-    font-size: 0.8rem;
-  }
-
-  .loginButton {
-    font-size: 0.9rem;
-    padding: 10px 0;
-  }
+  .containerLogin { padding: 22px 16px; max-width: 300px; }
+  .logo { width: 100px; }
+  .codeInput { max-width: 180px; font-size: 1.2rem; height: 45px; }
+  .header { font-size: 1.1rem; }
+  .description { font-size: 0.8rem; }
+  .loginButton { font-size: 0.9rem; padding: 10px 0; }
 }

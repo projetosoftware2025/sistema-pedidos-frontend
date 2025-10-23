@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./index.module.css";
 import background from "../../assets/background.png";
@@ -6,43 +6,13 @@ import logo from "../../assets/logo.png";
 
 export const CodigoRecuperar: React.FC = () => {
   const navigate = useNavigate();
-  const [codigo, setCodigo] = useState<string[]>(["", "", "", "", ""]);
+  const [codigo, setCodigo] = useState("");
   const [erro, setErro] = useState(false);
 
-  // ✅ Tipagem correta do useRef
-  const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
-
-  // Atualiza o valor digitado e foca no próximo campo
-  const handleChange = (valor: string, index: number) => {
-    if (/^\d*$/.test(valor)) {
-      const novoCodigo = [...codigo];
-      novoCodigo[index] = valor;
-      setCodigo(novoCodigo);
-      setErro(false);
-
-      // Foca no próximo campo se o usuário digitar um número
-      if (valor && index < inputsRef.current.length - 1) {
-        inputsRef.current[index + 1]?.focus();
-      }
-    }
-  };
-
-  // Move o foco ao apagar um campo
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    if (e.key === "Backspace" && !codigo[index] && index > 0) {
-      inputsRef.current[index - 1]?.focus();
-    }
-  };
-
-  // Envio do formulário
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const codigoCompleto = codigo.join("");
 
-    if (codigoCompleto === "12345") {
+    if (codigo === "12345") {
       setErro(false);
       alert("✅ Código válido! Redirecionando para redefinição...");
       navigate("/nova-senha");
@@ -67,30 +37,17 @@ export const CodigoRecuperar: React.FC = () => {
         </p>
 
         <form className={styles.form} onSubmit={handleSubmit}>
-          <div className={styles.codeInputs}>
-            {codigo.map((valor, i) => (
-              <input
-                key={i}
-                ref={(el: HTMLInputElement | null): void => {
-                  inputsRef.current[i] = el;
-                }}
-                type="text"
-                inputMode="numeric"
-                maxLength={1}
-                pattern="[0-9]*"
-                value={valor}
-                onChange={(e) => handleChange(e.target.value, i)}
-                onKeyDown={(e) => handleKeyDown(e, i)}
-                className={`${styles.codeInput} ${
-                  erro ? styles.codeInputError : ""
-                }`}
-              />
-            ))}
-          </div>
+          <input
+            type="text"
+            inputMode="numeric"
+            maxLength={5}
+            value={codigo}
+            onChange={(e) => setCodigo(e.target.value)}
+            className={`${styles.codeInput} ${erro ? styles.codeInputError : ""}`}
+            placeholder="Digite o código"
+          />
 
-          {erro && (
-            <p className={styles.errorMessage}>Código inválido. Tente novamente.</p>
-          )}
+          {erro && <p className={styles.errorMessage}>Código inválido. Tente novamente.</p>}
 
           <button
             type="button"

@@ -96,7 +96,7 @@ export const LoginView: React.FC = () => {
             <button
               type="button"
               className={styles.forgotPasswordButton}
-              onClick={() => navigate('/RecuperarAcesso')}
+              onClick={() => navigate('/recuperar-acesso')}
             >
               Esqueci minha senha
             </button>
