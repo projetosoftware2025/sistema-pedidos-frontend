@@ -4,6 +4,8 @@ import { User, Eye, EyeOff } from "lucide-react";
 import styles from './index.module.css';
 import logo from '../../assets/logo.png';
 import background from '../../assets/background.png';
+import { URL_BASE } from '../../utils/constants';
+import axios from 'axios';
 
 export const LoginView: React.FC = () => {
   const navigate = useNavigate();
@@ -12,14 +14,28 @@ export const LoginView: React.FC = () => {
   const [senhaVisivel, setSenhaVisivel] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = async () => {
-    setError('');
-    if (!usuario || !senha) {
-      setError('Preencha e-mail e senha');
-      return;
+   const handleLogin = async (email: string, senha: string) => {
+    try {
+      const response = await axios.post(`${URL_BASE}/usuario/login`, {
+        email,
+        senha
+      });
+
+      if (response.status === 200) {
+        //login realizado com sucesso
+        const token = response.data.token; // API retorna token
+        localStorage.setItem('token', token); // salva token no localStorage
+        navigate('/'); // redireciona para a página principal
+      } else {
+        setError('Usuário ou senha incorretos');
+      }
+    } catch (err: any) {
+      if (err.response && err.response.data && err.response.data.mensagem) {
+        setError(err.response.data.mensagem);
+      } else {
+        setError('Erro ao conectar com o servidor');
+      }
     }
-    console.log('Login:', { usuario, senha });
-    navigate('/');
   };
 
   return (
@@ -38,7 +54,7 @@ export const LoginView: React.FC = () => {
           className={styles.form}
           onSubmit={(e) => {
             e.preventDefault();
-            handleLogin();
+            handleLogin(usuario, senha);
           }}
         >
           <div className={styles.inputGroup}>
