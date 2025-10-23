@@ -73,6 +73,7 @@
 
 .containerItens::-webkit-scrollbar {
   height: 6px;
+  display: none;
 }
 
 .containerItens::-webkit-scrollbar-thumb {
