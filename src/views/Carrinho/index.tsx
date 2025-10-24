@@ -7,6 +7,7 @@ import { RootState } from "../../redux/store";
 import { toast } from "react-toastify";
 import { formatarReal } from "../../utils/formatarReal";
 import { QuantidadeModal } from "../../components/QuantidadeModal";
+import { setLastPath } from "../../redux/reducers/appReducer";
 
 export const Carrinho = () => {
     const navigate = useNavigate();
@@ -39,7 +40,7 @@ export const Carrinho = () => {
                             className={styles.backToHomeButton}
                             onClick={() => navigate("/")}
                         >
-                            Ver Produtos
+                            Ver produtos
                         </button>
                     </div>
                 ) : (
@@ -92,7 +93,10 @@ export const Carrinho = () => {
                             <span className={styles.totalValue}>{totalFormatted}</span>
                         </div>
 
-                        <button className={styles.checkoutButton}>
+                        <button className={styles.checkoutButton} onClick={()=>{
+                            navigate("/dados-pessoais");
+                            dispatch(setLastPath("/carrinho"))
+                        }}>
                             Informe seus dados
                         </button>
                     </div>
