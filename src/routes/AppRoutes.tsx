@@ -5,9 +5,10 @@ import CadastroView from "../views/Cadastro";
 import { MeusPedidos } from "../views/MeusPedidos";
 import { Carrinho } from "../views/Carrinho";
 import RecuperarAcesso from "../views/RecuperarAcesso";
-import {CodigoRecuperar }  from "../views/CodigoRecuperar";
-import {RedefinirSenha } from "../views/RedefinirSenha";
-import {TeladeFinalizacao } from "../views/TeladeFinalizacao";
+import { CodigoRecuperar } from "../views/CodigoRecuperar";
+import { RedefinirSenha } from "../views/RedefinirSenha";
+import { TeladeFinalizacao } from "../views/TeladeFinalizacao";
+
 
 export const AppRoutes = createBrowserRouter([
   {
@@ -16,39 +17,38 @@ export const AppRoutes = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <LoginView />, 
+    element: <LoginView />,
   },
   {
-    path: "/cadastro", 
-    element: <CadastroView />, 
+    path: "/cadastro",
+    element: <CadastroView />,
   },
   {
-    path: "/meus-pedidos", 
-    element: <MeusPedidos />, 
+    path: "/meus-pedidos",
+    element: <MeusPedidos />,
   },
   {
-    path: "/carrinho", 
-    element: <Carrinho />, 
+    path: "/carrinho",
+    element: <Carrinho />,
   },
   {
     path: "/RecuperarAcesso",
-    element: <RecuperarAcesso />, 
+    element: <RecuperarAcesso />,
   },
   {
     path: "/CodigoRecuperar",
-    element: <CodigoRecuperar />, 
+    element: <CodigoRecuperar />,
   },
   {
     path: "/RedefinirSenha",
-    element: <RedefinirSenha />, 
+    element: <RedefinirSenha />,
   },
-{
+  {
     path: "/TeladeFinalizacao",
-    element: <TeladeFinalizacao />, 
+    element: <TeladeFinalizacao />,
   },
   {
     path: "*",
     element: <h1>Página não encontrada</h1>,
   },
 ]);
-
