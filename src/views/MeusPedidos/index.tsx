@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp, ChevronLeft } from "lucide-react";
 import styles from "./index.module.css";
+import { useNavigate } from "react-router-dom";
 
 interface Produto {
   nome: string;
@@ -19,6 +20,7 @@ interface Pedido {
 export const MeusPedidos: React.FC = () => {
   const [pedidoAberto, setPedidoAberto] = useState<number | null>(null);
   const [filtroStatus, setFiltroStatus] = useState<string>("");
+  const navigate = useNavigate()
 
   const pedidos: Pedido[] = [
     {
@@ -90,16 +92,16 @@ export const MeusPedidos: React.FC = () => {
     filtroStatus === ""
       ? pedidos
       : pedidos.filter(
-          (p) => p.status.toLowerCase() === filtroStatus.toLowerCase()
-        );
+        (p) => p.status.toLowerCase() === filtroStatus.toLowerCase()
+      );
 
   return (
     <div className={styles.page}>
-      <div className={styles.topRow}>
-        <button className={styles.backBtn}>
-          <ChevronLeft size={28} />
-        </button>
-        <h1 className={styles.title}>Meus pedidos</h1>
+      <div className={styles.header}>
+        <div className={styles.toBack} onClick={() => navigate("/")}>
+          <ChevronLeft size={32} strokeWidth={2} />
+        </div>
+        <span>Meus pedidos</span>
       </div>
 
       <div className={styles.filters}>
@@ -220,16 +222,16 @@ export const MeusPedidos: React.FC = () => {
 
                     {(pedido.status === "aguardando" ||
                       pedido.status === "pendente") && (
-                      <button
-                        className={styles.cancelBtn}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCancelarPedido(pedido.id);
-                        }}
-                      >
-                        Cancelar pedido
-                      </button>
-                    )}
+                        <button
+                          className={styles.cancelBtn}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCancelarPedido(pedido.id);
+                          }}
+                        >
+                          Cancelar pedido
+                        </button>
+                      )}
                   </div>
                 )}
               </div>

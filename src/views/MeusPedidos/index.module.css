@@ -1,99 +1,71 @@
-/* ===========================================================
-   🎯 BASE E ESTRUTURA GERAL
-   =========================================================== */
 .page {
-  background-color: #f5f5f5;
-  min-height: 100vh;
-  padding: 16px;
-  font-family: "Inter", sans-serif;
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  background-color: #f5f5f5;
+  font-family: "Inter", sans-serif;
   animation: fadeIn 0.4s ease-in-out;
+  overflow: hidden; /* mantém o layout fixo */
 }
 
-/* Animação de entrada da página */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ===========================================================
-   🔝 CABEÇALHO
-   =========================================================== */
-.topRow {
+/* HEADER FIXO */
+.header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 24px;
-  animation: slideDown 0.4s ease;
+  padding: 16px 16px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: #ff8a00;
+  color: white;
+  flex-shrink: 0;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.backBtn {
-  background: none;
-  border: none;
+.toBack {
   cursor: pointer;
-  padding: 4px;
-  transition: transform 0.2s ease;
-}
-
-.backBtn:active {
-  transform: scale(0.9);
-}
-
-.title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #000;
-}
-
-/* ===========================================================
-   🔍 FILTROS
-   =========================================================== */
-.filters {
+  margin-right: 12px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+}
+
+/* 🔥 FILTROS MAIS COMPACTOS */
+.filters {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 22px;
-  animation: fadeIn 0.6s ease;
+  padding: 12px 16px;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  z-index: 5;
+  justify-content: space-between;
 }
 
 .filterItem {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  flex: 1 1 calc(33.33% - 12px); /* 3 colunas no desktop */
+  min-width: 140px;
 }
 
 .filterItem label {
   font-size: 13px;
   font-weight: 600;
   color: #222;
+  margin-bottom: 4px;
 }
 
 .dateInput,
 .select {
-  height: 44px;
-  padding: 0 12px;
+  height: 40px;
+  padding: 0 10px;
   border: 2px solid #ff6c00;
-  border-radius: 12px;
+  border-radius: 10px;
   background-color: #fff;
-  font-size: 15px;
+  font-size: 14px;
   color: #444;
   outline: none;
   transition: all 0.25s ease;
@@ -105,17 +77,29 @@
   box-shadow: 0 0 6px rgba(229, 46, 113, 0.4);
 }
 
-/* ===========================================================
-   🧾 LISTA DE PEDIDOS
-   =========================================================== */
+/* 🔥 LISTA ROLÁVEL */
 .list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  background: #f5f5f5;
   animation: fadeIn 0.7s ease;
+  min-height: 0; /* 🔥 faz o scroll funcionar dentro de flex */
 }
 
-/* CARD PRINCIPAL */
+/* barra de rolagem */
+.list::-webkit-scrollbar {
+  width: 8px;
+}
+.list::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+}
+.list::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* CARD */
 .card {
   display: flex;
   background-color: #fff;
@@ -124,6 +108,7 @@
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   animation: slideUp 0.4s ease both;
+  margin-bottom: 12px;
 }
 
 @keyframes slideUp {
@@ -140,13 +125,12 @@
 .card:active {
   transform: scale(0.98);
 }
-
 .card:hover {
   transform: translateY(-3px);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.12);
 }
 
-/* Tarja colorida lateral do status */
+/* STATUS LATERAL */
 .statusBar {
   width: 52px;
   min-width: 52px;
@@ -163,50 +147,25 @@
   transition: background-color 0.3s ease;
 }
 
-/* Cores por status */
-.statusBar.ANDAMENTO {
-  background-color: #ff9800;
-}
-.statusBar.PRONTO {
-  background-color: #4caf50;
-}
-.statusBar.FINALIZADO {
-  background-color: #2196f3;
-}
-.statusBar.CANCELADO {
-  background-color: #f44336;
-}
+.statusBar.ANDAMENTO { background-color: #ff9800; }
+.statusBar.PRONTO { background-color: #4caf50; }
+.statusBar.FINALIZADO { background-color: #2196f3; }
+.statusBar.CANCELADO { background-color: #f44336; }
 
-/* Conteúdo do card */
+/* CONTEÚDO DO CARD */
 .cardContent {
   flex: 1;
   padding: 10px 14px;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
 }
 
-/* ===========================================================
-   🧩 CABEÇALHO DO CARD
-   =========================================================== */
+/* HEADER DO CARD */
 .cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  overflow: visible;
-}
-
-.cardHeader svg {
-  flex-shrink: 0;
-  min-width: 22px;
-  min-height: 22px;
-  color: #000;
-  transition: transform 0.2s ease;
-}
-
-.cardHeader svg.rotate {
-  transform: rotate(180deg);
 }
 
 .cardHeader h3 {
@@ -226,9 +185,7 @@
   margin-top: 4px;
 }
 
-/* ===========================================================
-   📦 DETALHES DO PEDIDO / PRODUTOS
-   =========================================================== */
+/* DETALHES EXPANDIDOS */
 .details {
   margin-top: 10px;
   background-color: #fafafa;
@@ -249,13 +206,7 @@
   }
 }
 
-.details p {
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #333;
-}
-
-/* Tabela de produtos */
+/* TABELA */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -278,9 +229,7 @@
   border-bottom: 1px solid #eee;
 }
 
-/* ===========================================================
-   ❌ BOTÃO CANCELAR
-   =========================================================== */
+/* BOTÃO CANCELAR */
 .cancelBtn {
   margin-top: 12px;
   width: 100%;
@@ -305,24 +254,25 @@
   opacity: 0.8;
 }
 
-/* ===========================================================
-   📱 RESPONSIVIDADE
-   =========================================================== */
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+  }
+  .filterItem {
+    flex: 1 1 100%;
+  }
+}
 
-/* Celulares pequenos */
 @media (max-width: 480px) {
-  .page {
-    padding: 12px;
-  }
-
-  .title {
-    font-size: 18px;
-  }
-
   .card {
     flex-direction: column;
   }
 
+  .filters{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
   .statusBar {
     width: 100%;
     border-radius: 0;
@@ -330,52 +280,7 @@
     border-top-right-radius: 16px;
     padding: 6px 0;
   }
-
-  .cardContent {
-    padding: 12px;
-  }
-
   .cardHeader h3 {
     font-size: 14px;
-  }
-}
-
-/* Tablets */
-@media (min-width: 600px) {
-  .filters {
-    flex-direction: row;
-    gap: 14px;
-  }
-
-  .filterItem {
-    flex: 1;
-  }
-
-  .title {
-    font-size: 22px;
-  }
-
-  .card {
-    flex-direction: row;
-  }
-
-  .statusBar {
-    width: 56px;
-    border-radius: 16px 0 0 16px;
-  }
-}
-
-/* Desktops */
-@media (min-width: 1024px) {
-  .page {
-    padding: 32px 48px;
-  }
-
-  .card {
-    border-radius: 18px;
-  }
-
-  .cardHeader h3 {
-    font-size: 16px;
   }
 }

@@ -18,6 +18,7 @@ import { addToCart } from "../../redux/reducers/cartReducer";
 import { DeviceType } from "../../app/models/types/DeviceType";
 import { formatarReal } from "../../utils/formatarReal";
 import { setSideBar } from "../../redux/reducers/appReducer";
+import axios from "axios";
 
 
 interface ItemImage {
@@ -34,39 +35,6 @@ interface produto {
   preco: number;
   categoriaId: number
 }
-
-const itens: ItemImage[] = [
-  {
-    id: 1,
-    imagem: cafeManha,
-    nome: "Café da Manhã"
-  },
-  {
-    id: 2,
-    imagem: almoco,
-    nome: "Almoço"
-  },
-  {
-    id: 3,
-    imagem: jantar,
-    nome: "Jantar"
-  },
-  {
-    id: 4,
-    imagem: doces,
-    nome: "Doces"
-  },
-  {
-    id: 5,
-    imagem: cafeManha,
-    nome: "Salgados"
-  },
-  {
-    id: 6,
-    imagem: cafeManha,
-    nome: "Sobremesas"
-  }
-]
 
 const produtos: produto[] = [
   // Categoria 1 - Café da Manhã
@@ -120,12 +88,13 @@ export const HomeView = () => {
 
   const dispatch = useDispatch();
   const isSidebarOpen = useSelector((state: RootState) => state.app.isSidebarOpen);
-  const [categotiaSelecionada, setCategoriaSelecionada] = useState<ItemImage>(itens[0]);
+  const [categotiaSelecionada, setCategoriaSelecionada] = useState<ItemImage>();
   const [produtosLista, setProdutosLista] = useState<produto[]>(produtos.filter((produto) => { return produto.categoriaId == 1 }));
   const [produtoSelecionado, setProdutoSelecionado] = useState<produto | null>(null);
   const user: UserInterface = useSelector(
     (state: RootState) => state.auth.user
   );
+  const [categorias, setCategorias] = useState<ItemImage[]>()
 
   const [device, setDevice] = useState<DeviceType>(undefined)
 
@@ -137,6 +106,17 @@ export const HomeView = () => {
     // const notificarCliente = () => {
     //   toast.success("Pedido #12345 pronto! Retire no balcão.");
     // };
+
+    const buscarCategorias = async () => {
+      try {
+        const response = await axios.get("https://sistema-pedidos-gestao-api.onrender.com/categoria/buscar-categorias")
+        if (response.status === 200) {
+          setCategorias(response.data)
+        }
+      } catch (error) {
+
+      }
+    }
 
 
 
@@ -161,6 +141,7 @@ export const HomeView = () => {
     // }, 6000);
 
     // return () => clearInterval(intervalo);
+    buscarCategorias()
   }, [user]);
 
   const selecionarCategoria = (item: ItemImage) => {
@@ -200,7 +181,7 @@ export const HomeView = () => {
 
     // Se o campo estiver vazio, volta a lista completa
     if (!termo.trim()) {
-      setProdutosLista(produtos.filter((produto) => { return produto.categoriaId == categotiaSelecionada.id })); // supondo que você tenha guardado a lista original
+      setProdutosLista(produtos.filter((produto) => { return produto.categoriaId == categotiaSelecionada?.id })); // supondo que você tenha guardado a lista original
       return;
     }
 
@@ -244,18 +225,20 @@ export const HomeView = () => {
               />
             </div>
 
-            <div className={styles.containerItens}>
-              {itens.map((item) => (
-                <div
-                  key={item.id}
-                  className={styles.containerItem}
-                  style={{ backgroundImage: `url(${item.imagem})` }}
-                  onClick={() => selecionarCategoria(item)}
-                >
-                  <span className={styles.itemText}>{item.nome}</span>
-                </div>
-              ))}
-            </div>
+            {categorias &&
+              <div className={styles.containerItens}>
+                {categorias?.map((item) => (
+                  <div
+                    key={item.id}
+                    className={styles.containerItem}
+                    style={{ backgroundImage: `url(${item.imagem})` }}
+                    onClick={() => selecionarCategoria(item)}
+                  >
+                    <span className={styles.itemText}>{item!.nome}</span>
+                  </div>
+                ))}
+              </div>
+            }
 
 
             <div>
