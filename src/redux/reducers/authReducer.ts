@@ -1,14 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserInterface } from "../../app/models/interfaces/UserInterface";
-import emptyUser from "../../data/userEmpty";
+import {emptyUser} from "../../data/userEmpty";
+import { ClienteInterface } from "../../app/models/interfaces/ClienteInterface";
+import { emptyCliente } from "../../data/clienteEmpty";
 
 interface AuthState {
   user: UserInterface;
-//   token: TokenInterface;
+  cliente: ClienteInterface;
 }
 
 const initialState: AuthState = {
   user: emptyUser,
+  cliente: emptyCliente
 };
 
 const authReducer = createSlice({
@@ -20,10 +23,16 @@ const authReducer = createSlice({
     },
     resetAuth(state) {
       state.user = initialState.user;
-    }
+    },
+    setCliente(state, action: PayloadAction<ClienteInterface>){
+      state.cliente = action.payload;
+    },
+    resetCliente(state) {
+      state.cliente = initialState.cliente;
+    },
   },
 });
 
-export const { setUser, resetAuth } = authReducer.actions;
+export const { setUser, resetAuth, setCliente, resetCliente } = authReducer.actions;
 
 export default authReducer.reducer;

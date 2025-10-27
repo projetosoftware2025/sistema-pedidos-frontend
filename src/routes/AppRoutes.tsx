@@ -8,6 +8,8 @@ import RecuperarAcesso from "../views/RecuperarAcesso";
 import { CodigoRecuperar } from "../views/CodigoRecuperar";
 import { RedefinirSenha } from "../views/RedefinirSenha";
 import { TeladeFinalizacao } from "../views/TeladeFinalizacao";
+import { DadosPessoais } from "../views/DadosPessoais";
+import { RedirectPage } from "../views/RedirectPage";
 
 
 export const AppRoutes = createBrowserRouter([
@@ -48,7 +50,11 @@ export const AppRoutes = createBrowserRouter([
     element: <TeladeFinalizacao />,
   },
   {
+    path: "/dados-pessoais",
+    element: <DadosPessoais />,
+  },
+  {
     path: "*",
-    element: <h1>Página não encontrada</h1>,
+    element: <RedirectPage />,
   },
 ]);

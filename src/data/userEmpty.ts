@@ -1,6 +1,6 @@
 import { UserInterface } from "../app/models/interfaces/UserInterface";
 
-const emptyUser: UserInterface = {
+export const emptyUser: UserInterface = {
   usuario: "",
   email: "",
   logado: false,
@@ -8,4 +8,4 @@ const emptyUser: UserInterface = {
 
 };
 
-export default emptyUser;
+ 
