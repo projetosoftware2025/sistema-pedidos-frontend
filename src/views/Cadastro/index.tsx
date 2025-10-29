@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserPlus, Eye, EyeOff } from "lucide-react";
+
 import styles from "./index.module.css";
 import logo from "../../assets/logo.png";
 import background from "../../assets/background.png";
@@ -11,7 +12,6 @@ const Cadastro: React.FC = () => {
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
-    cpf: "",
     senha: "",
     confirmarSenha: "",
   });
@@ -25,10 +25,11 @@ const Cadastro: React.FC = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.nome || !formData.email || !formData.cpf || !formData.senha || !formData.confirmarSenha) {
+    // Validações básicas 
+    if (!formData.nome || !formData.email || !formData.senha || !formData.confirmarSenha) {
       setErro("Preencha todos os campos!");
       setMensagem("");
       return;
@@ -40,11 +41,36 @@ const Cadastro: React.FC = () => {
       return;
     }
 
-    console.log("Dados enviados:", formData);
-    setErro("");
-    setMensagem("Cadastro realizado com sucesso!");
+    // Envio para API
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/register`,
+        {
+          nome: formData.nome,
+          email: formData.email,
+          cpf: formData.cpf,
+          senha: formData.senha,
+        }
+      );
 
-    setTimeout(() => navigate("/login"), 1500);
+      if (response.status === 201 || response.status === 200) {
+        setMensagem("Cadastro realizado com sucesso!");
+        setErro("");
+
+        // Redireciona para login após
+        setTimeout(() => navigate("/login"), 1500);
+      } else {
+        setErro("Algo deu errado. Tente novamente.");
+        setMensagem("");
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data.message) {
+        setErro(`Erro: ${error.response.data.message}`);
+      } else {
+        setErro("Erro de conexão com o servidor.");
+      }
+      setMensagem("");
+    }
   };
 
   return (
@@ -67,6 +93,7 @@ const Cadastro: React.FC = () => {
               placeholder="Nome completo"
               value={formData.nome}
               onChange={handleChange}
+              required
             />
           </div>
 
@@ -77,6 +104,7 @@ const Cadastro: React.FC = () => {
               placeholder="E-mail"
               value={formData.email}
               onChange={handleChange}
+              required
             />
           </div>
 
@@ -87,6 +115,7 @@ const Cadastro: React.FC = () => {
               placeholder="CPF"
               value={formData.cpf}
               onChange={handleChange}
+              required
             />
           </div>
 
@@ -97,6 +126,7 @@ const Cadastro: React.FC = () => {
               placeholder="Senha"
               value={formData.senha}
               onChange={handleChange}
+              required
             />
             <span
               className={styles.showPasswordIcon}
@@ -113,6 +143,7 @@ const Cadastro: React.FC = () => {
               placeholder="Confirmar senha"
               value={formData.confirmarSenha}
               onChange={handleChange}
+              required
             />
             <span
               className={styles.showPasswordIcon}
