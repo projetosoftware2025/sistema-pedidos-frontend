@@ -5,6 +5,7 @@ import { UserPlus, Eye, EyeOff } from "lucide-react";
 import styles from "./index.module.css";
 import logo from "../../assets/logo.png";
 import background from "../../assets/background.png";
+import axios from "axios";
 
 const Cadastro: React.FC = () => {
   const navigate = useNavigate();
@@ -28,8 +29,13 @@ const Cadastro: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validações básicas 
-    if (!formData.nome || !formData.email || !formData.senha || !formData.confirmarSenha) {
+    // Validações básicas
+    if (
+      !formData.nome ||
+      !formData.email ||
+      !formData.senha ||
+      !formData.confirmarSenha
+    ) {
       setErro("Preencha todos os campos!");
       setMensagem("");
       return;
@@ -44,11 +50,10 @@ const Cadastro: React.FC = () => {
     // Envio para API
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/register`,
+        `${process.env.REACT_APP_API_URL}/usuario/cadastrar`,
         {
           nome: formData.nome,
           email: formData.email,
-          cpf: formData.cpf,
           senha: formData.senha,
         }
       );
@@ -110,17 +115,6 @@ const Cadastro: React.FC = () => {
 
           <div className={styles.inputGroup}>
             <input
-              type="text"
-              name="cpf"
-              placeholder="CPF"
-              value={formData.cpf}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className={styles.inputGroup}>
-            <input
               type={senhaVisivel ? "text" : "password"}
               name="senha"
               placeholder="Senha"
@@ -155,10 +149,7 @@ const Cadastro: React.FC = () => {
 
           {erro && <div className={styles.errorMessage}>{erro}</div>}
           {mensagem && (
-            <div
-              className={styles.errorMessage}
-              style={{ color: "#00b050" }}
-            >
+            <div className={styles.errorMessage} style={{ color: "#00b050" }}>
               {mensagem}
             </div>
           )}
