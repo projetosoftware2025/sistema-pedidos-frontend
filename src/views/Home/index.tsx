@@ -231,10 +231,10 @@ export const HomeView = () => {
                   <div
                     key={item.id}
                     className={styles.containerItem}
-                    style={{ backgroundImage: `url(${item.imagem})` }}
+                    style={{ backgroundImage: `url(${item?.imagem})` }}
                     onClick={() => selecionarCategoria(item)}
                   >
-                    <span className={styles.itemText}>{item!.nome}</span>
+                    <span className={styles.itemText}>{item?.nome}</span>
                   </div>
                 ))}
               </div>
@@ -248,7 +248,7 @@ export const HomeView = () => {
                 fontSize: "1.2rem",
                 fontWeight: "bold",
                 paddingLeft: "16px"
-              }}>{categotiaSelecionada!.nome}</div>
+              }}>{categotiaSelecionada?.nome}</div>
 
 
               <div className={styles.produtosWrapper}>
