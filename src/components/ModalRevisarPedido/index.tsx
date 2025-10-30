@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: () => void;
+    onConfirm: (cart: CartItemInterface[]) => void;
     cliente: ClienteInterface;
     carrinho: CartItemInterface[];
     formaPagamento: PagamentoType;
@@ -64,7 +64,7 @@ export const ModalRevisarPedido: React.FC<ModalProps> = ({
                 <div className={styles.footer}>
                     <button className={styles.cancelButton} onClick={onClose}>Cancelar</button>
                     <button className={styles.confirmButton}
-                        onClick={onConfirm}>
+                        onClick={()=>{onConfirm(carrinho)}}>
                         Confirmar
                     </button>
                 </div>

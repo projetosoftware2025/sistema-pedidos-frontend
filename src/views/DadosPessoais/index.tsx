@@ -10,6 +10,15 @@ import { CartItemInterface, clearCart } from "../../redux/reducers/cartReducer";
 import { ModalRevisarPedido } from "../../components/ModalRevisarPedido";
 import { PagamentoType } from "../../app/models/types/PagamentoType";
 import { toast } from "react-toastify";
+import axios from "axios";
+
+interface DadosInterface {
+    cliente: string;
+    cpf: string;
+    telefone: string;
+    formaPagamento: PagamentoType;
+}
+
 
 export const DadosPessoais = () => {
     const navigate = useNavigate();
@@ -29,6 +38,12 @@ export const DadosPessoais = () => {
     const [error, setError] = useState("");
     const [formaPagamento, setFormaPagamento] = useState<PagamentoType>();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [formData, setFormData] = useState<DadosInterface>({
+        cliente: "",
+        cpf: "",
+        telefone: "",
+        formaPagamento: "Dinheiro"
+    });
 
     const opcoesPagamento: PagamentoType[] = [
         "Dinheiro",
@@ -39,27 +54,113 @@ export const DadosPessoais = () => {
 
     // Abre o modal de revisão
     const abrirModal = () => {
-        if (!cliente.nome || !cliente.cpf || !cliente.telefone) {
+        console.log("formData modal: ", formData)
+        if (!formData.cliente || !formData.cpf || !formData.telefone) {
             setError("Preencha todos os dados pessoais!");
             return;
         }
-        if (!formaPagamento) {
-            setError("Selecione uma forma de pagamento!");
-            return;
-        }
+        // if (!formaPagamento) {
+        //     setError("Selecione uma forma de pagamento!");
+        //     return;
+        // }
         setError("");
         setIsModalOpen(true);
     };
 
     // Confirma o pedido dentro do modal
-    const confirmarPedido = () => {
-        toast.success("Pedido confirmado!");
-        setIsModalOpen(false);
-        // Aqui você pode navegar para uma tela de confirmação
-        navigate("/");
-        dispatch( resetCliente())
-        dispatch(clearCart())
+    const confirmarItensPedido = async (
+        idPedido: number,
+        cart: CartItemInterface[]
+    ) => {
+        // Verifica se há itens para processar
+        if (cart.length === 0) {
+            return; // Nada a fazer
+        }
+
+        // 1. Mapeia cada item do carrinho para uma Promise de requisição POST
+        const itemRequests = cart.map((item) => {
+            // Constrói o corpo da requisição conforme o modelo da API de itens
+            const itemPayload = {
+                idPedido: idPedido,
+                idProduto: item.id,
+                titulo: item.titulo,
+                valorUnitario: item.preco,
+                quantidade: item.quantidade,
+            };
+
+            // **URL CORRIGIDA**: Use a URL completa para evitar erros de ambiente
+            return axios.post("http://localhost:8080/itens-pedido/cadastrar", itemPayload);
+        });
+
+        // 2. Executa todas as requisições em paralelo
+        // Se uma falhar, Promise.all lança um erro e a execução do try/catch para.
+        await Promise.all(itemRequests);
     };
+
+
+    // -----------------------------------------------------------------
+    // FUNÇÃO 1: CRIA O PEDIDO PRINCIPAL E CHAMA O CADASTRO DOS ITENS
+    // -----------------------------------------------------------------
+    const confirmarPedido = async (cart: CartItemInterface[]) => {
+
+        // **Ajuste:** É melhor usar 'carrinho' diretamente, se estiver no escopo. 
+        // Assumindo que 'cart' é um parâmetro redundante ou igual a 'carrinho'.
+        const currentCart = carrinho;
+
+        if (!formData.cliente || !formData.cpf || !formData.formaPagamento || !formData.telefone) {
+            setError("Informe todos os dados do cliente!");
+            return;
+        }
+
+        if (currentCart.length === 0) {
+            setError("O carrinho está vazio! Adicione itens ao pedido.");
+            return;
+        }
+
+        let pedidoId; // Variável para armazenar o ID do pedido principal
+
+        // 1. CRIAÇÃO DO PEDIDO PRINCIPAL
+        try {
+            console.log("Enviando dados do pedido principal: ", formData);
+
+            const response = await axios.post("http://localhost:8080/pedido/cadastrar", formData);
+
+            if (response.status !== 200 && response.status !== 201) {
+                // Se o status for diferente de 200 ou 201 (Created), lança um erro
+                throw new Error(`Falha na criação do pedido principal. Status: ${response.status}`);
+            }
+
+            // ⚠️ Assume que a API retorna o ID do novo pedido em response.data.id
+            pedidoId = response.data.id;
+
+        } catch (error) {
+            console.error("Erro na Criação do Pedido Principal:", error);
+            toast.error("Erro ao criar o pedido principal. Tente novamente!");
+            return; // Interrompe se o pedido principal falhar
+        }
+
+        // 2. CADASTRO DOS ITENS DO PEDIDO
+        if (pedidoId) {
+            try {
+                // Chamando a função de itens com o ID do Pedido e o Carrinho
+                await confirmarItensPedido(pedidoId, currentCart);
+
+                // 3. LÓGICA DE SUCESSO FINAL
+                toast.success("Pedido efetuado com sucesso!");
+
+                // Limpeza e navegação
+                setIsModalOpen(false);
+                navigate("/");
+                dispatch(resetCliente());
+                dispatch(clearCart());
+
+            } catch (error) {
+                console.error("Erro ao cadastrar um ou mais itens do pedido:", error);
+                toast.error("Pedido principal criado, mas houve falha ao cadastrar os itens! Contate o suporte.");
+            }
+        }
+    };
+
 
     useEffect(() => {
         // Redireciona se carrinho vazio ou se a página anterior não foi o carrinho
@@ -94,10 +195,11 @@ export const DadosPessoais = () => {
                         <input
                             type="text"
                             placeholder="Nome completo"
-                            value={cliente.nome}
+                            value={formData?.cliente}
                             onChange={(e) =>
-                                dispatch(setCliente({ ...cliente, nome: e.target.value }))
+                                setFormData({ ...formData, cliente: e.target.value })
                             }
+
                         />
                     </div>
                     <div className={styles.inputGroup}>
@@ -105,9 +207,9 @@ export const DadosPessoais = () => {
                         <input
                             type="text"
                             placeholder="CPF"
-                            value={cliente.cpf}
+                            value={formData?.cpf}
                             onChange={(e) =>
-                                dispatch(setCliente({ ...cliente, cpf: e.target.value }))
+                                setFormData({ ...formData, cpf: e.target.value })
                             }
                         />
                     </div>
@@ -116,9 +218,9 @@ export const DadosPessoais = () => {
                         <input
                             type="text"
                             placeholder="Telefone"
-                            value={cliente.telefone}
+                            value={formData?.telefone}
                             onChange={(e) =>
-                                dispatch(setCliente({ ...cliente, telefone: e.target.value }))
+                                setFormData({ ...formData, telefone: e.target.value })
                             }
                         />
                     </div>
@@ -135,10 +237,9 @@ export const DadosPessoais = () => {
                                     name="formaPagamento"
                                     value={opcao}
                                     checked={formaPagamento === opcao}
-                                    onChange={() => {
-                                        setFormaPagamento(opcao);
-                                        setError("");
-                                    }}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, formaPagamento: opcao })
+                                    }
                                 />
                                 <span>{opcao}</span>
                             </label>
@@ -157,7 +258,7 @@ export const DadosPessoais = () => {
             <ModalRevisarPedido
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onConfirm={confirmarPedido}
+                onConfirm={() => { confirmarPedido(carrinho) }}
                 cliente={cliente}
                 carrinho={carrinho}
                 formaPagamento={formaPagamento}
