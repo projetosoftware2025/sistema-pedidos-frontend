@@ -10,6 +10,8 @@ import { RedefinirSenha } from "../views/RedefinirSenha";
 import { TeladeFinalizacao } from "../views/TeladeFinalizacao";
 import { DadosPessoais } from "../views/DadosPessoais";
 import { RedirectPage } from "../views/RedirectPage";
+import { GestaoCadastros } from "../views/GestaoCadastros";
+import { GestaoProdutos } from "../views/GestaoProdutos";
 
 
 export const AppRoutes = createBrowserRouter([
@@ -57,4 +59,12 @@ export const AppRoutes = createBrowserRouter([
     path: "*",
     element: <RedirectPage />,
   },
+  {
+    path: "gestao-cadastros",
+    element: <GestaoCadastros/>
+  },
+  {
+    path: "gestao-produtos",
+    element: <GestaoProdutos/>
+  }
 ]);
