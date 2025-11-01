@@ -191,7 +191,7 @@ export const HomeView = () => {
               />
             </div>
 
-            {categorias &&
+            {categorias && categorias.length ?
               <div className={styles.containerItens}>
                 {categorias?.map((item) => (
                   <div
@@ -204,6 +204,8 @@ export const HomeView = () => {
                   </div>
                 ))}
               </div>
+
+              : ""
             }
 
 
@@ -217,7 +219,7 @@ export const HomeView = () => {
               }}>{categotiaSelecionada?.descricao}</div>
 
 
-              {produtosLista &&
+              {produtosLista && produtosLista.length ?
                 <div className={styles.produtosWrapper}>
                   <div className={styles.produtosContainer}>
                     {produtosLista?.map((item) => (
@@ -249,6 +251,8 @@ export const HomeView = () => {
                     )}
                   </div>
                 </div>
+
+                : ""
               }
 
             </div>
