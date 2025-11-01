@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { formatarReal } from "../../utils/formatarReal";
 import { QuantidadeModal } from "../../components/QuantidadeModal";
 import { setLastPath } from "../../redux/reducers/appReducer";
-import { URL_BASE } from "../../utils/constants";
+import { URL_API_GESTAO } from "../../utils/constants";
 
 export const Carrinho = () => {
     const navigate = useNavigate();
@@ -50,7 +50,7 @@ export const Carrinho = () => {
                             <div key={produto.id} className={styles.produto}>
                                 <div
                                     className={styles.produtoImage}
-                                    style={{ backgroundImage: `url(${URL_BASE}}/produto/imagem/${produto.id})` }}
+                                    style={{ backgroundImage: `url(${URL_API_GESTAO}}/produto/imagem/${produto.id})` }}
                                 />
                                 <div className={styles.produtoInfo}>
                                     <div>{produto.titulo}</div>

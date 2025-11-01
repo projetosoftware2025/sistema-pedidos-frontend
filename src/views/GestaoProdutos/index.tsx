@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState, ChangeEvent, FormEvent } from "react";
+import { URL_API_GESTAO } from "../../utils/constants";
 
 interface ProdutoCadastro {
     titulo: string;
@@ -60,7 +61,7 @@ export const GestaoProdutos: React.FC = () => {
         // ... dentro do handleSubmit
         try {
             const response = await axios.post(
-                "http://localhost:8080/produto/cadastrar",
+                `${URL_API_GESTAO}/produto/cadastrar`,
                 formData
                 // sem o headers Content-Type
             );

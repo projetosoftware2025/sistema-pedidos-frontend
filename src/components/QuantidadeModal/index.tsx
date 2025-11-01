@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styles from "./index.module.css";
 import { formatarReal } from "../../utils/formatarReal";
+import { URL_API_GESTAO } from "../../utils/constants";
 
 interface QuantidadeModalProps {
   produto: {
@@ -19,13 +20,12 @@ export const QuantidadeModal: React.FC<QuantidadeModalProps> = ({
   onClose,
 }) => {
   const [quantidade, setQuantidade] = useState(1);
-    const ulrImagem = "http://localhost:8080"
 
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <h3>{produto.titulo}</h3>
-        <img src={`${ulrImagem}/produto/imagem/${produto.id}`} alt={produto.titulo} className={styles.produtoImg}/>
+        <img src={`${URL_API_GESTAO}/produto/imagem/${produto.id}`} alt={produto.titulo} className={styles.produtoImg}/>
         <p className={styles.preco}>Valor: {formatarReal(produto.preco)}</p>
         <p className={styles.preco}>Total: {formatarReal(produto.preco * quantidade)}</p>
 

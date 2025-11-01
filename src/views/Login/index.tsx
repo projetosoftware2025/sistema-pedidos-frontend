@@ -4,7 +4,7 @@ import { User, Eye, EyeOff } from "lucide-react";
 import styles from './index.module.css';
 import logo from '../../assets/logo.png';
 import background from '../../assets/background.png';
-import { URL_BASE } from '../../utils/constants';
+import { URL_API_USERS } from '../../utils/constants';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -21,7 +21,7 @@ export const LoginView: React.FC = () => {
       return
     }
     try {
-      const response = await axios.post(`${URL_BASE}/usuario/login`, {
+      const response = await axios.post(`${URL_API_USERS}/usuario/login`, {
         email,
         senha
       });

@@ -19,7 +19,7 @@ import { DeviceType } from "../../app/models/types/DeviceType";
 import { formatarReal } from "../../utils/formatarReal";
 import { setSideBar } from "../../redux/reducers/appReducer";
 import axios from "axios";
-import { URL_BASE } from "../../utils/constants";
+import { URL_API_GESTAO } from "../../utils/constants";
 
 
 interface ItemImage {
@@ -50,8 +50,6 @@ export const HomeView = () => {
   );
   const [categorias, setCategorias] = useState<ItemImage[]>()
 
-  const ulrImagem = "http://localhost:8080"
-
   const [device, setDevice] = useState<DeviceType>(undefined)
 
   const mostrarNotificacao = () => {
@@ -65,7 +63,7 @@ export const HomeView = () => {
 
     const buscarCategorias = async () => {
       try {
-        const response = await axios.get(`${URL_BASE}/categoria/buscar-categorias`)
+        const response = await axios.get(`}/categoria/buscar-categorias`)
         if (response.status === 200) {
           setCategoriaSelecionada(response.data[0])
           setCategorias(response.data)
@@ -77,7 +75,7 @@ export const HomeView = () => {
 
     const buscarProdutos = async () => {
       try {
-        const response = await axios.get(`${URL_BASE}/produto/buscar-produtos`)
+        const response = await axios.get(`}/produto/buscar-produtos`)
         if (response.status === 200) {
           setProdutosLista(response.data)
         }
@@ -199,7 +197,7 @@ export const HomeView = () => {
                   <div
                     key={item.id}
                     className={styles.containerItem}
-                    style={{ backgroundImage: `url(${ulrImagem}/categoria/imagem/${item.id})` }}
+                    style={{ backgroundImage: `url(${URL_API_GESTAO}/categoria/imagem/${item.id})` }}
                     onClick={() => selecionarCategoria(item)}
                   >
                     <span className={styles.itemText}>{item?.descricao}</span>
@@ -229,7 +227,7 @@ export const HomeView = () => {
                         onClick={() => setProdutoSelecionado(item)}
                       >
                         <img
-                          src={`${ulrImagem}/produto/imagem/${item.id}`}
+                          src={`${URL_API_GESTAO}/produto/imagem/${item.id}`}
                           alt={item.titulo}
                           className={styles.produtoImagem}
                         />

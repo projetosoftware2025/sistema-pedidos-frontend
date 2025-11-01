@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { URL_API_USERS } from "../../utils/constants";
 
 function RecuperarAcesso() {
   const [email, setEmail] = useState("");
@@ -11,8 +12,7 @@ function RecuperarAcesso() {
     e.preventDefault();
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL;
-      await axios.post(`${apiUrl}/usuario/recuperar-senha`, { email });
+      await axios.post(`${URL_API_USERS}/usuario/recuperar-senha`, { email });
       setMensagem("Código de recuperação enviado ao seu e-mail!");
       navigate("/codigo-recuperar")
     } catch (error) {

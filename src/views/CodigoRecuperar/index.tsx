@@ -5,6 +5,7 @@ import background from "../../assets/background.png";
 import logo from "../../assets/logo.png";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { URL_API_USERS } from "../../utils/constants";
 
 export const CodigoRecuperar: React.FC = () => {
   const navigate = useNavigate();
@@ -15,8 +16,7 @@ export const CodigoRecuperar: React.FC = () => {
     e.preventDefault();
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL;
-      await axios.post(`${apiUrl}/usuario/recuperar-senha`, { codigo });
+      await axios.post(`${URL_API_USERS}/usuario/recuperar-senha`, { codigo });
       toast("")
       navigate("/codigo-recuperar")
     } catch (error) {

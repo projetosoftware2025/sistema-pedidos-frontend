@@ -11,6 +11,7 @@ import { ModalRevisarPedido } from "../../components/ModalRevisarPedido";
 import { PagamentoType } from "../../app/models/types/PagamentoType";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { URL_API_GESTAO } from "../../utils/constants";
 
 interface DadosInterface {
     cliente: string;
@@ -89,7 +90,7 @@ export const DadosPessoais = () => {
             };
 
             // **URL CORRIGIDA**: Use a URL completa para evitar erros de ambiente
-            return axios.post("http://localhost:8080/itens-pedido/cadastrar", itemPayload);
+            return axios.post(`${URL_API_GESTAO}/itens-pedido/cadastrar`, itemPayload);
         });
 
         // 2. Executa todas as requisições em paralelo
@@ -123,7 +124,7 @@ export const DadosPessoais = () => {
         try {
             console.log("Enviando dados do pedido principal: ", formData);
 
-            const response = await axios.post("http://localhost:8080/pedido/cadastrar", formData);
+            const response = await axios.post(`{URL_API_GESTAO}/pedido/cadastrar`, formData);
 
             if (response.status !== 200 && response.status !== 201) {
                 // Se o status for diferente de 200 ou 201 (Created), lança um erro

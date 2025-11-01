@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState, ChangeEvent, FormEvent } from "react";
+import { URL_API_GESTAO } from "../../utils/constants";
 
 export const GestaoCadastros = () => {
   const [descricao, setDescricao] = useState<string>("");
@@ -21,7 +22,7 @@ export const GestaoCadastros = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/categoria/cadastrar",
+        `${URL_API_GESTAO}/categoria/cadastrar`,
         formData,
         {
           headers: {
