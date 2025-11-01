@@ -15,6 +15,7 @@ export const Carrinho = () => {
     const cartItens: CartItemInterface[] = useSelector(
         (state: RootState) => state.cart.cartProdutos
     );
+      const ulrImagem = "http://localhost:8080"
 
     const isCartEmpty = cartItens.length === 0;
 
@@ -49,7 +50,7 @@ export const Carrinho = () => {
                             <div key={produto.id} className={styles.produto}>
                                 <div
                                     className={styles.produtoImage}
-                                    style={{ backgroundImage: `url(${produto.url})` }}
+                                    style={{ backgroundImage: `url(${ulrImagem}/produto/imagem/${produto.id})` }}
                                 />
                                 <div className={styles.produtoInfo}>
                                     <div>{produto.titulo}</div>
