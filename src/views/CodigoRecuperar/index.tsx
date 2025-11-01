@@ -3,20 +3,24 @@ import { useNavigate } from "react-router-dom";
 import styles from "./index.module.css";
 import background from "../../assets/background.png";
 import logo from "../../assets/logo.png";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 export const CodigoRecuperar: React.FC = () => {
   const navigate = useNavigate();
   const [codigo, setCodigo] = useState("");
   const [erro, setErro] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (codigo === "12345") {
-      setErro(false);
-      alert("✅ Código válido! Redirecionando para redefinição...");
-      navigate("/nova-senha");
-    } else {
+    try {
+      const apiUrl = process.env.REACT_APP_API_URL;
+      await axios.post(`${apiUrl}/usuario/recuperar-senha`, { codigo });
+      toast("")
+      navigate("/codigo-recuperar")
+    } catch (error) {
+      console.error(error);
       setErro(true);
     }
   };
