@@ -1,2 +1,2 @@
-export const URL_API_USERS = process.env.URL_API_USERS || "http://localhost:8080";
-export const URL_API_GESTAO = process.env.URL_API_GESTAO || "http://localhost:8080";
+export const URL_API_USERS = "https://sistema-pedidos-users-api.onrender.com"
+export const URL_API_GESTAO = "https://sistema-pedidos-gestao-api.onrender.com";
