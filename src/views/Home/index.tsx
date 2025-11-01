@@ -1,17 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./index.module.css";
 import { HeaderComponent } from "../../components/Header";
-import { Users, Fish, Search } from "lucide-react";
 import { SidebarComponent } from "../../components/SidebarComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import cafeManha from "../../assets/cafe-manha.png";
-import almoco from "../../assets/almoco.png";
-import jantar from "../../assets/jantar.png";
-import doces from "../../assets/doces.png";
 import { toast, ToastContainer } from "react-toastify";
 import { useEffect, useState } from "react";
-import { setTimeout } from "timers/promises";
 import { UserInterface } from "../../app/models/interfaces/UserInterface";
 import { QuantidadeModal } from "../../components/QuantidadeModal/index";
 import { addToCart } from "../../redux/reducers/cartReducer";
@@ -43,30 +37,24 @@ export const HomeView = () => {
   const dispatch = useDispatch();
   const isSidebarOpen = useSelector((state: RootState) => state.app.isSidebarOpen);
   const [categotiaSelecionada, setCategoriaSelecionada] = useState<ItemImage>();
-  const [produtosLista, setProdutosLista] = useState<produto[]>();
+  const [produtosLista, setProdutosLista] = useState<produto[]>([]);
   const [produtoSelecionado, setProdutoSelecionado] = useState<produto | null>(null);
   const user: UserInterface = useSelector(
     (state: RootState) => state.auth.user
   );
-  const [categorias, setCategorias] = useState<ItemImage[]>()
+  const [categorias, setCategorias] = useState<ItemImage[]>([])
 
   const [device, setDevice] = useState<DeviceType>(undefined)
 
-  const mostrarNotificacao = () => {
-    toast.success("Operação concluída com sucesso!");
-  };
-
   useEffect(() => {
-    // const notificarCliente = () => {
-    //   toast.success("Pedido #12345 pronto! Retire no balcão.");
-    // };
 
     const buscarCategorias = async () => {
       try {
-        const response = await axios.get(`}/categoria/buscar-categorias`)
+        const response = await axios.get(`${URL_API_GESTAO}/categoria/buscar-categorias`);
         if (response.status === 200) {
-          setCategoriaSelecionada(response.data[0])
-          setCategorias(response.data)
+          const data = Array.isArray(response.data) ? response.data : [];
+          setCategorias(data);
+          setCategoriaSelecionada(data[0]);
         }
       } catch (error) {
 
@@ -75,38 +63,22 @@ export const HomeView = () => {
 
     const buscarProdutos = async () => {
       try {
-        const response = await axios.get(`}/produto/buscar-produtos`)
-        if (response.status === 200) {
-          setProdutosLista(response.data)
+        const produtosRes = await axios.get(`${URL_API_GESTAO}/produto/buscar-produtos`);
+        if (produtosRes.status === 200) {
+          const produtos = Array.isArray(produtosRes.data) ? produtosRes.data : [];
+          setProdutosLista(produtos);
         }
       } catch (error) {
 
       }
     }
 
-
-
     if (window.innerWidth >= 768) {
       setDevice("desktop")
-      // if (!user.logado) {
-      //   toast.info("Sessão encerrada! Faça login novamente.");
 
-      //   setInterval(() => {
-      //     navigate("/login")
-      //   }, 1000);
-
-      // }
     } else {
       setDevice("mobile")
     }
-
-    // notificarCliente();
-
-    // const intervalo = setInterval(() => {
-    //   notificarCliente();
-    // }, 6000);
-
-    // return () => clearInterval(intervalo);
     buscarCategorias()
     buscarProdutos();
   }, [user]);
@@ -137,7 +109,6 @@ export const HomeView = () => {
   };
 
   const buscarProduto = (descricao: string) => {
-    // Função para normalizar texto (remove acento e coloca tudo minúsculo)
     const normalizar = (texto: string) =>
       texto
         .normalize("NFD")
@@ -146,13 +117,11 @@ export const HomeView = () => {
 
     const termo = normalizar(descricao);
 
-    // Se o campo estiver vazio, volta a lista completa
     if (!termo.trim()) {
       setProdutosLista(produtosLista?.filter((produto) => { return produto.categoriaId == categotiaSelecionada?.id })); // supondo que você tenha guardado a lista original
       return;
     }
 
-    // Filtro por parte da palavra (sem diferenciar acento ou maiúscula)
     const resultado = produtosLista?.filter((item) => {
       const tituloNormalizado = normalizar(item.titulo);
       const descricaoNormalizada = normalizar(item.descricao || "");
@@ -193,7 +162,7 @@ export const HomeView = () => {
 
             {categorias && categorias.length ?
               <div className={styles.containerItens}>
-                {categorias?.map((item) => (
+                {categorias.length > 0 && categorias?.map((item) => (
                   <div
                     key={item.id}
                     className={styles.containerItem}
@@ -222,7 +191,7 @@ export const HomeView = () => {
               {produtosLista && produtosLista.length ?
                 <div className={styles.produtosWrapper}>
                   <div className={styles.produtosContainer}>
-                    {produtosLista?.map((item) => (
+                    {produtosLista.length > 0 &&  produtosLista?.map((item) => (
                       <div
                         key={item.id}
                         className={styles.produtoCard}
