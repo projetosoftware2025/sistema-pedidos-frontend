@@ -14,35 +14,21 @@ import { formatarReal } from "../../utils/formatarReal";
 import { setSideBar } from "../../redux/reducers/appReducer";
 import axios from "axios";
 import { URL_API_GESTAO } from "../../utils/constants";
-
-
-interface ItemImage {
-  id: number;
-  imagem: string;
-  descricao: string;
-}
-
-interface produto {
-  id: number;
-  titulo: string;
-  descricao: string;
-  url: string;
-  preco: number;
-  categoriaId: number
-}
+import { ProdutoInterface } from "../../app/models/interfaces/ProdutoInterface";
+import { ItemImageInterface } from "../../app/models/interfaces/ItemImageInterface";
 
 export const HomeView = () => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
   const isSidebarOpen = useSelector((state: RootState) => state.app.isSidebarOpen);
-  const [categotiaSelecionada, setCategoriaSelecionada] = useState<ItemImage>();
-  const [produtosLista, setProdutosLista] = useState<produto[]>([]);
-  const [produtoSelecionado, setProdutoSelecionado] = useState<produto | null>(null);
+  const [categotiaSelecionada, setCategoriaSelecionada] = useState<ItemImageInterface>();
+  const [produtosLista, setProdutosLista] = useState<ProdutoInterface[]>([]);
+  const [produtoSelecionado, setProdutoSelecionado] = useState<ProdutoInterface | null>(null);
   const user: UserInterface = useSelector(
     (state: RootState) => state.auth.user
   );
-  const [categorias, setCategorias] = useState<ItemImage[]>([])
+  const [categorias, setCategorias] = useState<ItemImageInterface[]>([])
 
   const [device, setDevice] = useState<DeviceType>(undefined)
 
@@ -83,7 +69,7 @@ export const HomeView = () => {
     buscarProdutos();
   }, [user]);
 
-  const selecionarCategoria = (item: ItemImage) => {
+  const selecionarCategoria = (item: ItemImageInterface) => {
     setCategoriaSelecionada(item);
     const produtosFiltrados = produtosLista?.filter((produto) => {
       return produto.categoriaId == item.id

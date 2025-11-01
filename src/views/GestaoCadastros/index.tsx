@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { URL_API_GESTAO } from "../../utils/constants";
 
 export const GestaoCadastros = () => {

@@ -5,12 +5,13 @@ import { ClienteInterface } from "../../app/models/interfaces/ClienteInterface";
 import { formatarReal } from "../../utils/formatarReal";
 import { PagamentoType } from "../../app/models/types/PagamentoType";
 import { useNavigate } from "react-router-dom";
+import { DadosInterface } from "../../app/models/interfaces/DadosInterface";
 
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     onConfirm: (cart: CartItemInterface[]) => void;
-    cliente: ClienteInterface;
+    cliente: DadosInterface;
     carrinho: CartItemInterface[];
     formaPagamento: PagamentoType;
 }
@@ -34,7 +35,7 @@ export const ModalRevisarPedido: React.FC<ModalProps> = ({
 
                 <section className={styles.section}>
                     <h3>Dados Pessoais</h3>
-                    <p><strong>Nome:</strong> {cliente.nome}</p>
+                    <p><strong>Nome:</strong> {cliente.cliente}</p>
                     <p><strong>CPF:</strong> {cliente.cpf}</p>
                     <p><strong>Telefone:</strong> {cliente.telefone}</p>
                 </section>

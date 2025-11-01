@@ -50,7 +50,7 @@ export const Carrinho = () => {
                             <div key={produto.id} className={styles.produto}>
                                 <div
                                     className={styles.produtoImage}
-                                    style={{ backgroundImage: `url(${URL_API_GESTAO}}/produto/imagem/${produto.id})` }}
+                                    style={{ backgroundImage: `url(${URL_API_GESTAO}/produto/imagem/${produto.id})` }}
                                 />
                                 <div className={styles.produtoInfo}>
                                     <div>{produto.titulo}</div>

@@ -1,17 +1,12 @@
 import axios from "axios";
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { URL_API_GESTAO } from "../../utils/constants";
+import { ItemImageInterface } from "../../app/models/interfaces/ItemImageInterface";
+import { ProdutoCadastroInterface } from "../../app/models/interfaces/ProdutoCadastroInterface";
 
-interface ProdutoCadastro {
-    titulo: string;
-    descricao: string;
-    preco: string;
-    categoria: string;
-    imagem: File | null;
-}
 
 export const GestaoProdutos: React.FC = () => {
-    const [produto, setProduto] = useState<ProdutoCadastro>({
+    const [produto, setProduto] = useState<ProdutoCadastroInterface>({
         titulo: "",
         descricao: "",
         preco: "",
@@ -21,9 +16,35 @@ export const GestaoProdutos: React.FC = () => {
 
     const [preview, setPreview] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    
+    // Estado para armazenar as categorias vindas da API
+    const [categorias, setCategorias] = useState<ItemImageInterface[]>([])
+
+    // 1. Hook para buscar as categorias (Rodará apenas na montagem)
+    useEffect(() => {
+        const buscarCategorias = async () => {
+            try {
+                const response = await axios.get(`${URL_API_GESTAO}/categoria/buscar-categorias`);
+                if (response.status === 200) {
+                    const data = Array.isArray(response.data) ? response.data : [];
+                    setCategorias(data);
+                    
+                    // Se houver categorias, pré-seleciona a primeira (ou deixa o placeholder)
+                    if (data.length > 0) {
+                        setProduto(prev => ({ ...prev, categoria: String(data[0].id) }));
+                    }
+                }
+            } catch (error) {
+                console.error("Erro ao buscar categorias:", error);
+            }
+        }
+
+        buscarCategorias();
+    }, []) // Array de dependências vazio: só executa uma vez
+
 
     const handleChange = (
-        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> // Inclui HTMLSelectElement
     ) => {
         const { name, value } = e.target;
         setProduto((prev) => ({ ...prev, [name]: value }));
@@ -53,17 +74,16 @@ export const GestaoProdutos: React.FC = () => {
         formData.append("titulo", titulo);
         formData.append("descricao", descricao);
         formData.append("preco", preco);
-        formData.append("categoria", categoria);
+        // Enviando o ID da categoria, que é o valor selecionado no <select>
+        formData.append("categoria", categoria); 
         if (imagem) formData.append("imagem", imagem);
 
         setLoading(true);
 
-        // ... dentro do handleSubmit
         try {
             const response = await axios.post(
                 `${URL_API_GESTAO}/produto/cadastrar`,
                 formData
-                // sem o headers Content-Type
             );
 
             alert(response.data);
@@ -71,9 +91,12 @@ export const GestaoProdutos: React.FC = () => {
         } catch (error) {
             console.error("Erro ao cadastrar produto:", error);
             alert("Erro ao cadastrar produto. Tente novamente.");
+        } finally {
+            setLoading(false);
         }
 
     };
+
 
     return (
         <form
@@ -131,16 +154,24 @@ export const GestaoProdutos: React.FC = () => {
                 />
             </label>
 
+            {/* AQUI ESTÁ O SELECT CORRIGIDO */}
             <label>
                 Categoria:
-                <input
-                    type="text"
+                <select
                     name="categoria"
                     value={produto.categoria}
                     onChange={handleChange}
-                    placeholder="Ex: Tintas"
                     required
-                />
+                >
+                    <option value="" disabled>
+                        Selecione uma Categoria
+                    </option>
+                    {categorias.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                            {cat.descricao}
+                        </option>
+                    ))}
+                </select>
             </label>
 
             <label>
