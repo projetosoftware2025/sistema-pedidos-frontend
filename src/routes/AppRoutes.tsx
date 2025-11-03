@@ -8,7 +8,7 @@ import RecuperarAcesso from "../views/RecuperarAcesso";
 import { CodigoRecuperar } from "../views/CodigoRecuperar";
 import { RedefinirSenha } from "../views/RedefinirSenha";
 import { TeladeFinalizacao } from "../views/TeladeFinalizacao";
-
+import  GerenciamentoPedidos  from "../views/GerenciamentoPedidos";
 
 export const AppRoutes = createBrowserRouter([
   {
@@ -46,6 +46,10 @@ export const AppRoutes = createBrowserRouter([
   {
     path: "/TeladeFinalizacao",
     element: <TeladeFinalizacao />,
+  },
+  {
+    path: "/Gerenciamentopedidos",
+    element: <GerenciamentoPedidos />,
   },
   {
     path: "*",
