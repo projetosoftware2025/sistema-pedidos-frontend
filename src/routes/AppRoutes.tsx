@@ -8,6 +8,7 @@ import RecuperarAcesso from "../views/RecuperarAcesso";
 import { CodigoRecuperar } from "../views/CodigoRecuperar";
 
 import { TeladeFinalizacao } from "../views/TeladeFinalizacao";
+import  GerenciamentoPedidos  from "../views/GerenciamentoPedidos";
 import { DadosPessoais } from "../views/DadosPessoais";
 import { RedirectPage } from "../views/RedirectPage";
 import { GestaoCadastros } from "../views/GestaoCadastros";
@@ -51,10 +52,6 @@ export const AppRoutes = createBrowserRouter([
   {
     path: "/tela-finalizado",
     element: <TeladeFinalizacao />,
-  },
-  {
-    path: "/dados-pessoais",
-    element: <DadosPessoais />,
   },
   {
     path: "*",
