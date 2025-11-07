@@ -64,5 +64,14 @@ export const AppRoutes = createBrowserRouter([
   {
     path: "gestao-produtos",
     element: <GestaoProdutos/>
-  }
+  },
+  {
+    path: "gestao-pedidos",
+    element: <GerenciamentoPedidos/>
+  },
+    {
+    path: "dados-pessoais",
+    element: <DadosPessoais/>
+  },
+
 ]);

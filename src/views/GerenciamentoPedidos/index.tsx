@@ -1,7 +1,13 @@
 import React, { useState, useMemo, useEffect } from "react";
 import styles from "./index.module.css";
+import { HeaderComponent } from "../../components/Header";
+import { SidebarComponent } from "../../components/SidebarComponent";
+import { setSideBar } from "../../redux/reducers/appReducer";
+import { RootState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-type Status = "andamento" | "pronto" | "finalizado" | "cancelado";
 
 interface Produto {
   id: string;
@@ -11,79 +17,50 @@ interface Produto {
 }
 
 interface Pedido {
+  id: number;
   numero: string;
-  nomeCliente: string;
-  cpfCliente: string;
-  data: string;
+  cliente: string;
+  cpf: string;
+  dtPedido: string;
+  dtFInalizacao: string | null;
+  dtCancelamento: string | null;
   formaPagamento: string;
-  produtos: Produto[];
-  status: Status;
-  comprovantePixUrl?: string | null;
-  motivoCancelamento?: string | null;
+  status: string;
 }
 
-const PEDIDOS_EXEMPLO: Pedido[] = [
-  {
-    numero: "1293",
-    nomeCliente: "Amanda Silva",
-    cpfCliente: "123.456.189-10",
-    data: "2025-10-27T14:30:00",
-    formaPagamento: "Pix",
-    produtos: [{ id: "1", nome: "Café expresso", valorUnitario: 6.99, quantidade: 1 }],
-    status: "andamento",
-  },
-  {
-    numero: "2344",
-    nomeCliente: "João Artur",
-    cpfCliente: "678.910.111-21",
-    data: "2025-10-27T15:00:00",
-    formaPagamento: "Débito",
-    produtos: [{ id: "2", nome: "Tapioca c/ ovo", valorUnitario: 6.99, quantidade: 1 }],
-    status: "andamento",
-  },
-  {
-    numero: "4959",
-    nomeCliente: "Márcio Viana",
-    cpfCliente: "161.718.192-01",
-    data: "2025-10-27T15:30:00",
-    formaPagamento: "Débito",
-    produtos: [{ id: "3", nome: "Coxinha", valorUnitario: 6.99, quantidade: 1 }],
-    status: "pronto",
-  },
-  {
-    numero: "1340",
-    nomeCliente: "Enzo Ferreira",
-    cpfCliente: "252.627.282-90",
-    data: "2025-10-27T16:00:00",
-    formaPagamento: "Crédito",
-    produtos: [{ id: "4", nome: "Refrigerante lata", valorUnitario: 6.99, quantidade: 1 }],
-    status: "finalizado",
-  },
-  {
-    numero: "6748",
-    nomeCliente: "Luisa Mendes",
-    cpfCliente: "363.738.391-20",
-    data: "2025-10-27T16:30:00",
-    formaPagamento: "Pix",
-    produtos: [{ id: "5", nome: "Pastel carne", valorUnitario: 6.99, quantidade: 1 }],
-    status: "cancelado",
-  },
-];
+type StatusType = "Andamento" | "Cancelado" | "Finalizado" | "Pronto" | ""
+
+interface FiltroInterface {
+  campo: string;
+  dataInicial: string | null; // formato "YYYY-MM-DD"
+  dataFinal: string | null;
+  status: StatusType;
+}
 
 export default function GerenciamentoPedidos() {
-  const [pedidos, setPedidos] = useState<Pedido[]>(PEDIDOS_EXEMPLO);
-  const [filtro, setFiltro] = useState({
+  const [pedidos, setPedidos] = useState<Pedido[]>();
+  const dispatch = useDispatch()
+  const hoje = new Date();
+  const tresDiasAtras = new Date();
+  tresDiasAtras.setDate(hoje.getDate() - 3);
+
+  // formatar para "YYYY-MM-DD"
+  const formatarData = (data: Date) => data.toISOString().split("T")[0];
+
+  const [filtro, setFiltro] = useState<FiltroInterface>({
     campo: "",
-    dataInicial: "",
-    dataFinal: "",
+    dataInicial: formatarData(tresDiasAtras),
+    dataFinal: formatarData(hoje),
     status: "",
   });
-  const [menuAtivo, setMenuAtivo] = useState<string | null>(null);
+
+  const [menuAtivo, setMenuAtivo] = useState<number>();
   const [detalhePedido, setDetalhePedido] = useState<Pedido | null>(null);
   const [pedidoCancelamento, setPedidoCancelamento] = useState<Pedido | null>(null);
   const [motivo, setMotivo] = useState("");
   const [pedidoPix, setPedidoPix] = useState<Pedido | null>(null); // usado para exibir o modal do comprovante
   const [confirmar, setConfirmar] = useState<"confirmar" | "recusar" | null>(null);
+  const isSidebarOpen = useSelector((state: RootState) => state.app.isSidebarOpen);
 
   // === Fecha o menu ao clicar fora ===
   useEffect(() => {
@@ -93,7 +70,7 @@ export default function GerenciamentoPedidos() {
         !target.closest(`.${styles.infoButton}`) &&
         !target.closest(`.${styles.menu}`)
       ) {
-        setMenuAtivo(null);
+        setMenuAtivo(0);
       }
     };
 
@@ -101,7 +78,25 @@ export default function GerenciamentoPedidos() {
     return () => document.removeEventListener("click", handleClickFora);
   }, []);
 
-  // === Fecha modais ao clicar fora ===
+  // useEffect(() => {
+  //   const buscarPedidos = async () => {
+  //     try {
+  //       const response = await axios.get(`https://sistema-pedidos-gestao-api.onrender.com/pedido/buscar-pedidos?dtInicio=${filtro.dataInicial}&dtFim=${filtro.dataFinal}`)
+  //       if (response.data && response.status == 200) {
+  //         setPedidos(response.data)
+  //       } else if (response.status == 404) {
+  //         toast.error("Pedidos não encotrados!")
+  //       } else {
+  //         toast.error("Pedidos não encotrados!")
+  //       }
+  //     } catch (error) {
+  //       toast.error("Pedidos não encotrados!")
+  //     }
+  //   };
+  //   buscarPedidos();
+
+  // }, [filtro.dataInicial, filtro.dataFinal]);
+
   useEffect(() => {
     const handleClickForaModal = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -120,241 +115,255 @@ export default function GerenciamentoPedidos() {
   const calcularTotal = (produtos: Produto[]) =>
     produtos.reduce((acc, p) => acc + p.valorUnitario * p.quantidade, 0);
 
-  const pedidosFiltrados = useMemo(() => {
-    return pedidos.filter((p) => {
-      const matchCampo =
-        !filtro.campo ||
-        p.nomeCliente.toLowerCase().includes(filtro.campo.toLowerCase()) ||
-        p.cpfCliente.includes(filtro.campo);
-      const matchStatus = !filtro.status || p.status === filtro.status;
-      const matchData =
-        (!filtro.dataInicial || new Date(p.data) >= new Date(filtro.dataInicial)) &&
-        (!filtro.dataFinal || new Date(p.data) <= new Date(filtro.dataFinal));
-      return matchCampo && matchStatus && matchData;
-    });
-  }, [filtro, pedidos]);
-
-  const atualizarStatus = (numero: string, novo: Status) => {
-    setPedidos((prev) =>
-      prev.map((p) =>
-        p.numero === numero ? { ...p, status: novo, motivoCancelamento: motivo } : p
-      )
-    );
-    setPedidoCancelamento(null);
-    setMotivo("");
+  const buscarPedidos = async () => {
+    try {
+      const response = await axios.get(`https://sistema-pedidos-gestao-api.onrender.com/pedido/buscar-pedidos?dtInicio=${filtro.dataInicial}&dtFim=${filtro.dataFinal}`)
+      if (response.data && response.status == 200) {
+        setPedidos(response.data)
+      } else if (response.status == 404) {
+        toast.error("Pedidos não encotrados!")
+      } else {
+        toast.error("Pedidos não encotrados!")
+      }
+    } catch (error) {
+      toast.error("Pedidos não encotrados!")
+    }
   };
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Gerenciamento de Pedidos</h1>
+      <HeaderComponent device="desktop" />
 
-      {/* FILTROS */}
-      <div className={styles.filters}>
-        <input
-          placeholder="Nome ou CPF"
-          value={filtro.campo}
-          onChange={(e) => setFiltro({ ...filtro, campo: e.target.value })}
+      <div className={styles.containerBox}>
+        <SidebarComponent
+          isOpen={isSidebarOpen}
+          onClose={() => dispatch(setSideBar(false))}
+          device={"desktop"}
         />
-        <input
-          type="date"
-          value={filtro.dataInicial}
-          onChange={(e) => setFiltro({ ...filtro, dataInicial: e.target.value })}
-        />
-        <input
-          type="date"
-          value={filtro.dataFinal}
-          onChange={(e) => setFiltro({ ...filtro, dataFinal: e.target.value })}
-        />
-        <select
-          value={filtro.status}
-          onChange={(e) => setFiltro({ ...filtro, status: e.target.value })}
-        >
-          <option value="">Status</option>
-          <option value="andamento">Andamento</option>
-          <option value="pronto">Pronto</option>
-          <option value="finalizado">Concluído</option>
-          <option value="cancelado">Cancelado</option>
-        </select>
-        <button className={styles.buscar}>Buscar</button>
-      </div>
 
-      {/* TABELA */}
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>N°</th>
-            <th>Cliente</th>
-            <th>CPF</th>
-            <th>Data do pedido</th>
-            <th>Forma de pagamento</th>
-            <th>Qtd</th>
-            <th>Valor</th>
-            <th>Status</th>
-            <th>Opções</th>
-          </tr>
-        </thead>
-        <tbody>
-          {pedidosFiltrados.map((p) => (
-            <tr key={p.numero}>
-              <td>{p.numero}</td>
-              <td>{p.nomeCliente}</td>
-              <td>{p.cpfCliente}</td>
-              <td>
-                {new Date(p.data).toLocaleDateString()}{" "}
-                {new Date(p.data).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-              </td>
-              <td>{p.formaPagamento}</td>
-              <td>{p.produtos.length}</td>
-              <td>R$ {calcularTotal(p.produtos).toFixed(2)}</td>
-              <td>
-                <span className={`${styles.status} ${styles[p.status]}`}>
-                  {p.status === "andamento"
-                    ? "Andamento"
-                    : p.status === "pronto"
-                    ? "Pronto"
-                    : p.status === "finalizado"
-                    ? "Concluído"
-                    : "Cancelado"}
-                </span>
-              </td>
+        <div className={styles.filters}>
+          <h1 className={styles.title}>Gerenciamento de Pedidos</h1>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault(); // evita reload
+            }}
+          >
+            <input
+              placeholder="Nome ou CPF"
+              value={filtro.campo}
+              onChange={(e) => setFiltro({ ...filtro, campo: e.target.value })}
+            />
 
-              {/* ======= MENU DE OPÇÕES ======= */}
-              <td className={styles.acoes}>
-                <button
-                  className={styles.infoButton}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setMenuAtivo(menuAtivo === p.numero ? null : p.numero);
-                  }}
-                >
-                  i
-                </button>
+            <input
+              type="date"
+              value={filtro.dataInicial ?? ""}
+              onChange={(e) => setFiltro({ ...filtro, dataInicial: e.target.value })}
+            />
 
-                {menuAtivo === p.numero && (
-                  <div className={styles.menu}>
-                    <button onClick={() => setDetalhePedido(p)}>Visualizar pedido</button>
-                    <button>Chamar cliente</button>
+            <input
+              type="date"
+              value={filtro.dataFinal ?? ""}
+              onChange={(e) => setFiltro({ ...filtro, dataFinal: e.target.value })}
+            />
 
-                    {/* === BOTÃO "Visualizar comprovante" ===
+            <select
+              value={filtro.status}
+              onChange={(e) => setFiltro({ ...filtro, status: e.target.value as StatusType })}
+            >
+              <option value="">Status</option>
+              <option value="Andamento">Andamento</option>
+              <option value="Pronto">Pronto</option>
+              <option value="Finalizado">Finalizado</option>
+              <option value="Cancelado">Cancelado</option>
+            </select>
+
+            <button className={styles.buscar} onClick={buscarPedidos}>Buscar</button>
+          </form>
+
+
+        </div>
+
+        {/* TABELA */}
+        {pedidos?.length ? <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>N°</th>
+              <th>Cliente</th>
+              <th>CPF</th>
+              <th>Data do pedido</th>
+              <th>Forma de pagamento</th>
+              {/* <th>Qtd</th>
+              <th>Valor</th> */}
+              <th>Status</th>
+              <th>Opções</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pedidos?.map((p) => (
+              <tr key={p.numero}>
+                <td>{p.numero}</td>
+                <td>{p.cliente}</td>
+                <td>{p.cpf}</td>
+                <td>
+                  {new Date(p.dtPedido).toLocaleDateString()}{" "}
+                  {new Date(p.dtPedido).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                </td>
+                <td>{p.formaPagamento}</td>
+                {/* <td>{p.produtos.length}</td> */}
+                {/* <td>R$ {calcularTotal(p.produtos).toFixed(2)}</td> */}
+                <td>
+                  <span className={`${styles.status} ${styles[p.status]}`}>
+                    {p.status === "A"
+                      ? "Andamento"
+                      : p.status === "P"
+                        ? "Pronto"
+                        : p.status === "F"
+                          ? "Concluído"
+                          : "Cancelado"}
+                  </span>
+                </td>
+
+                {/* ======= MENU DE OPÇÕES ======= */}
+                <td className={styles.acoes}>
+                  <button
+                    className={styles.infoButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMenuAtivo(menuAtivo === p.id ? 0 : p.id);
+                    }}
+                  >
+                    i
+                  </button>
+
+                  {menuAtivo === p.id && (
+                    <div className={styles.menu}>
+                      <button onClick={() => setDetalhePedido(p)}>Visualizar pedido</button>
+                      <button>Chamar cliente</button>
+
+                      {/* === BOTÃO "Visualizar comprovante" ===
                         Define o estado `pedidoPix` como o pedido selecionado,
                         fazendo aparecer o modal Pix logo abaixo. */}
-                    <button onClick={() => setPedidoPix(p)}>Visualizar comprovante</button>
+                      <button onClick={() => setPedidoPix(p)}>Visualizar comprovante</button>
 
-                    <button
-                      className={styles.cancelar}
-                      onClick={() => setPedidoCancelamento(p)}
-                    >
-                      Cancelar pedido
-                    </button>
-                  </div>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                      <button
+                        className={styles.cancelar}
+                        onClick={() => setPedidoCancelamento(p)}
+                      >
+                        Cancelar pedido
+                      </button>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table> :
+          <div>
 
-      {/* MODAL DETALHES */}
-      {detalhePedido && (
-        <div className={styles.modal}>
-          <div className={styles.card}>
-            <h2>Detalhes do pedido Nº {detalhePedido.numero}</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>Produto</th>
-                  <th>Qtd</th>
-                  <th>Valor</th>
-                </tr>
-              </thead>
-              <tbody>
-                {detalhePedido.produtos.map((p) => (
-                  <tr key={p.id}>
-                    <td>{p.nome}</td>
-                    <td>{p.quantidade}</td>
-                    <td>R$ {p.valorUnitario.toFixed(2)}</td>
+          </div>
+        }
+
+        {/* {detalhePedido && (
+          <div className={styles.modal}>
+            <div className={styles.card}>
+              <h2>Detalhes do pedido Nº {detalhePedido.numero}</h2>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Qtd</th>
+                    <th>Valor</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <h3>Valor total: R$ {calcularTotal(detalhePedido.produtos).toFixed(2)}</h3>
-            <div className={styles.actions}>
-              <button onClick={() => setDetalhePedido(null)}>Voltar</button>
+                </thead>
+                <tbody>
+                  {detalhePedido.produtos.map((p) => (
+                    <tr key={p.id}>
+                      <td>{p.nome}</td>
+                      <td>{p.quantidade}</td>
+                      <td>R$ {p.valorUnitario.toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <h3>Valor total: R$ {calcularTotal(detalhePedido.produtos).toFixed(2)}</h3>
+              <div className={styles.actions}>
+                <button onClick={() => setDetalhePedido(null)}>Voltar</button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )} */}
 
-      {/* MODAL CANCELAMENTO */}
-      {pedidoCancelamento && (
-        <div className={styles.modal}>
-          <div className={styles.card}>
-            <h2>Cancelar pedido Nº {pedidoCancelamento.numero}</h2>
-            <textarea
-              placeholder="Insira aqui o motivo do cancelamento"
-              value={motivo}
-              onChange={(e) => setMotivo(e.target.value)}
-            />
-            <div className={styles.actions}>
-              <button onClick={() => setPedidoCancelamento(null)}>Voltar</button>
-              <button
-                className={styles.enviar}
-                onClick={() => atualizarStatus(pedidoCancelamento.numero, "cancelado")}
-              >
-                Enviar
-              </button>
+        {/* MODAL CANCELAMENTO */}
+        {pedidoCancelamento && (
+          <div className={styles.modal}>
+            <div className={styles.card}>
+              <h2>Cancelar pedido Nº {pedidoCancelamento.numero}</h2>
+              <textarea
+                placeholder="Insira aqui o motivo do cancelamento"
+                value={motivo}
+                onChange={(e) => setMotivo(e.target.value)}
+              />
+              <div className={styles.actions}>
+                <button onClick={() => setPedidoCancelamento(null)}>Voltar</button>
+                <button
+                  className={styles.enviar}
+                // onClick={() => atualizarStatus(pedidoCancelamento.numero, "Cancelado")}
+                >
+                  Enviar
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* === MODAL PIX ===
-          Exibido quando o estado `pedidoPix` está definido.
-          Mostra o número do pedido e os botões de confirmar/recusar o pagamento. */}
-      {pedidoPix && (
-        <div className={styles.modal}>
-          <div className={styles.card}>
-            <h2>Comprovante Pix</h2>
-            <p>Pedido Nº {pedidoPix.numero}</p>
+        {pedidoPix && (
+          <div className={styles.modal}>
+            <div className={styles.card}>
+              <h2>Comprovante Pix</h2>
+              <p>Pedido Nº {pedidoPix.numero}</p>
 
-            {/* Caixa onde o comprovante Pix pode ser exibido */}
-            <div className={styles.pixBox}></div>
+              {/* Caixa onde o comprovante Pix pode ser exibido */}
+              <div className={styles.pixBox}></div>
 
-            <div className={styles.actions}>
-              <button className={styles.recusar} onClick={() => setConfirmar("recusar")}>
-                Recusar pagamento
-              </button>
-              <button className={styles.confirmar} onClick={() => setConfirmar("confirmar")}>
-                Confirmar pagamento
-              </button>
+              <div className={styles.actions}>
+                <button className={styles.recusar} onClick={() => setConfirmar("recusar")}>
+                  Recusar pagamento
+                </button>
+                <button className={styles.confirmar} onClick={() => setConfirmar("confirmar")}>
+                  Confirmar pagamento
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* CONFIRMAR/RECUSAR PIX */}
-      {confirmar && (
-        <div className={styles.modal}>
-          <div className={styles.alert}>
-            <h3>
-              {confirmar === "confirmar" ? "Confirmar pagamento" : "Recusar comprovante"}
-            </h3>
-            <p>Você tem certeza que deseja {confirmar} este pagamento?</p>
-            <div className={styles.actions}>
-              <button onClick={() => setConfirmar(null)}>Voltar</button>
-              <button
-                className={confirmar === "confirmar" ? styles.confirmar : styles.recusar}
-                onClick={() => {
-                  setConfirmar(null);
-                  setPedidoPix(null);
-                }}
-              >
-                {confirmar === "confirmar" ? "Confirmar" : "Recusar"}
-              </button>
+        {/* CONFIRMAR/RECUSAR PIX */}
+        {confirmar && (
+          <div className={styles.modal}>
+            <div className={styles.alert}>
+              <h3>
+                {confirmar === "confirmar" ? "Confirmar pagamento" : "Recusar comprovante"}
+              </h3>
+              <p>Você tem certeza que deseja {confirmar} este pagamento?</p>
+              <div className={styles.actions}>
+                <button onClick={() => setConfirmar(null)}>Voltar</button>
+                <button
+                  className={confirmar === "confirmar" ? styles.confirmar : styles.recusar}
+                  onClick={() => {
+                    setConfirmar(null);
+                    setPedidoPix(null);
+                  }}
+                >
+                  {confirmar === "confirmar" ? "Confirmar" : "Recusar"}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
+
+
+
     </div>
   );
 }

@@ -4,35 +4,39 @@
   color: #222;
   background-color: #f8f8f8;
   min-height: 100vh;
-  padding: 20px;
+  /* padding: 20px; */
 }
 
-.title {
-  text-align: center;
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 30px;
-  color: #333;
+.containerBox{
+  padding: 20px;
 }
 
 /* ======== FILTROS ======== */
 .filters {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: start;
   width: 60%;
-  margin: 0 auto 30px auto;
-  background: #fff;
-  padding: 15px 20px;
-  border-radius: 12px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
 }
+
+.filters form{
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px
+}
+
+.title {
+  text-align: start;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+}
+
 
 .filters input,
 .filters select {
-  padding: 8px 12px;
+  padding: 12px 12px;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 0.95rem;
@@ -51,7 +55,7 @@
   background: #fc7601;
   color: #fff;
   border: none;
-  padding: 9px 16px;
+  padding: 12px 16px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;

@@ -34,11 +34,19 @@ export const SidebarComponent: React.FC<SidebarProps> = ({ isOpen, onClose, devi
             <>
               <li
                 onClick={() => {
-                  navigate("/");
+                  navigate("/gestao-pedidos");
                   onClose();
                 }}
               >
                 Gerenciamento de Pedidos
+              </li>
+              <li
+                onClick={() => {
+                  navigate("/gestao-cadastros");
+                  onClose();
+                }}
+              >
+                Gerenciamento de Cadastros
               </li>
               <li
                 onClick={() => {
