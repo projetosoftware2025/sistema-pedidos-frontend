@@ -83,12 +83,12 @@ export const HeaderComponent: React.FC<HeaderProps> = ({ device }) => {
           <img src={logo} alt="Logo SuculentuS" className={styles.logo} />
         </div>
 
-        {device == "mobile" ?
+        {/* {device == "mobile" ? */}
           <div className={styles.cartContainer} onClick={() => {navigate("/carrinho")}}>
             <ShoppingBag size={28} color="white" />
             <div className={styles.cartNumber}>{cartProdutos.length}</div>
           </div>
-        : null}
+        {/* : null} */}
       </div>
 
     </>

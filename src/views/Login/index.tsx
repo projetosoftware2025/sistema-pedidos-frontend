@@ -92,7 +92,7 @@ export const LoginView: React.FC = () => {
           {error && <div className={styles.errorMessage}>{error}</div>}
 
           {/* Link Esqueci minha senha */}
-          <div className={styles.forgotPasswordContainer}>
+          {/* <div className={styles.forgotPasswordContainer}>
             <button
               type="button"
               className={styles.forgotPasswordButton}
@@ -100,7 +100,7 @@ export const LoginView: React.FC = () => {
             >
               Esqueci minha senha
             </button>
-          </div>
+          </div> */}
 
           <button type="submit" className={styles.loginButton}>
             Entrar

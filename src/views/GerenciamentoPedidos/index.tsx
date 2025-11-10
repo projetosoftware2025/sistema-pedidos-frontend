@@ -7,6 +7,8 @@ import { RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { EllipsisVertical, Info } from "lucide-react";
+import { formatarReal } from "../../utils/formatarReal";
 
 
 interface Produto {
@@ -26,6 +28,15 @@ interface Pedido {
   dtCancelamento: string | null;
   formaPagamento: string;
   status: string;
+}
+
+interface ItensPedidosInterface {
+  id: number,
+  idProduto: number,
+  idPedido: number,
+  titulo: string,
+  valorUnitario: number,
+  quantidade: number
 }
 
 type StatusType = "Andamento" | "Cancelado" | "Finalizado" | "Pronto" | ""
@@ -55,12 +66,13 @@ export default function GerenciamentoPedidos() {
   });
 
   const [menuAtivo, setMenuAtivo] = useState<number>();
-  const [detalhePedido, setDetalhePedido] = useState<Pedido | null>(null);
+  const [detalhePedido, setDetalhePedido] = useState<ItensPedidosInterface[] | null>(null);
   const [pedidoCancelamento, setPedidoCancelamento] = useState<Pedido | null>(null);
   const [motivo, setMotivo] = useState("");
   const [pedidoPix, setPedidoPix] = useState<Pedido | null>(null); // usado para exibir o modal do comprovante
   const [confirmar, setConfirmar] = useState<"confirmar" | "recusar" | null>(null);
   const isSidebarOpen = useSelector((state: RootState) => state.app.isSidebarOpen);
+  const [pedidoSelecionado, setPedidoSelecionado] = useState<Pedido>()
 
   // === Fecha o menu ao clicar fora ===
   useEffect(() => {
@@ -130,6 +142,21 @@ export default function GerenciamentoPedidos() {
     }
   };
 
+  const buscarDadosPedido = async (id: number) => {
+    try {
+      const response = await axios.get(`https://sistema-pedidos-gestao-api.onrender.com/itens-pedido/buscar-itens?idPedido=${id}`)
+      if (response.data && response.status == 200) {
+        setDetalhePedido(response.data)
+      } else if (response.status == 404) {
+        toast.error("Itens não encotrados!")
+      } else {
+        toast.error("Itens não encotrados!")
+      }
+    } catch (error) {
+      toast.error("Itens não encotrados!")
+    }
+  };
+
   return (
     <div className={styles.container}>
       <HeaderComponent device="desktop" />
@@ -148,11 +175,11 @@ export default function GerenciamentoPedidos() {
               e.preventDefault(); // evita reload
             }}
           >
-            <input
+            {/* <input
               placeholder="Nome ou CPF"
               value={filtro.campo}
               onChange={(e) => setFiltro({ ...filtro, campo: e.target.value })}
-            />
+            /> */}
 
             <input
               type="date"
@@ -166,7 +193,7 @@ export default function GerenciamentoPedidos() {
               onChange={(e) => setFiltro({ ...filtro, dataFinal: e.target.value })}
             />
 
-            <select
+            {/* <select
               value={filtro.status}
               onChange={(e) => setFiltro({ ...filtro, status: e.target.value as StatusType })}
             >
@@ -175,7 +202,7 @@ export default function GerenciamentoPedidos() {
               <option value="Pronto">Pronto</option>
               <option value="Finalizado">Finalizado</option>
               <option value="Cancelado">Cancelado</option>
-            </select>
+            </select> */}
 
             <button className={styles.buscar} onClick={buscarPedidos}>Buscar</button>
           </form>
@@ -195,13 +222,13 @@ export default function GerenciamentoPedidos() {
               {/* <th>Qtd</th>
               <th>Valor</th> */}
               <th>Status</th>
-              <th>Opções</th>
+              <th>Detalhes</th>
             </tr>
           </thead>
           <tbody>
             {pedidos?.map((p) => (
-              <tr key={p.numero}>
-                <td>{p.numero}</td>
+              <tr key={p.id}>
+                <td>{p.id}</td>
                 <td>{p.cliente}</td>
                 <td>{p.cpf}</td>
                 <td>
@@ -229,30 +256,23 @@ export default function GerenciamentoPedidos() {
                     className={styles.infoButton}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setMenuAtivo(menuAtivo === p.id ? 0 : p.id);
+                      // setMenuAtivo(menuAtivo === p.id ? 0 : p.id);
+                      buscarDadosPedido(p.id)
+                      setPedidoSelecionado(p)
                     }}
                   >
-                    i
+                    <Info size={28} color="orange" />
                   </button>
 
-                  {menuAtivo === p.id && (
+                  {/* {menuAtivo === p.id && (
                     <div className={styles.menu}>
-                      <button onClick={() => setDetalhePedido(p)}>Visualizar pedido</button>
-                      <button>Chamar cliente</button>
-
-                      {/* === BOTÃO "Visualizar comprovante" ===
-                        Define o estado `pedidoPix` como o pedido selecionado,
-                        fazendo aparecer o modal Pix logo abaixo. */}
-                      <button onClick={() => setPedidoPix(p)}>Visualizar comprovante</button>
-
-                      <button
-                        className={styles.cancelar}
-                        onClick={() => setPedidoCancelamento(p)}
-                      >
-                        Cancelar pedido
-                      </button>
+                      <button onClick={() => {
+                        buscarDadosPedido(p.id)
+                        setPedidoSelecionado(p)
+                      }}>Visualizar pedido</button>
+                     
                     </div>
-                  )}
+                  )} */}
                 </td>
               </tr>
             ))}
@@ -263,35 +283,40 @@ export default function GerenciamentoPedidos() {
           </div>
         }
 
-        {/* {detalhePedido && (
+        {detalhePedido && pedidoSelecionado ? (
           <div className={styles.modal}>
             <div className={styles.card}>
-              <h2>Detalhes do pedido Nº {detalhePedido.numero}</h2>
+              <h2>Detalhes do pedido Nº {pedidoSelecionado?.id}</h2>
               <table>
                 <thead>
                   <tr>
+                    <th>ID</th>
                     <th>Produto</th>
-                    <th>Qtd</th>
+                    <th>Quantidade</th>
                     <th>Valor</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {detalhePedido.produtos.map((p) => (
+
+                  {detalhePedido.map((p, index) => (
                     <tr key={p.id}>
-                      <td>{p.nome}</td>
+                      <td>{p.idProduto}</td>
+                      <td>{p.titulo}</td>
                       <td>{p.quantidade}</td>
-                      <td>R$ {p.valorUnitario.toFixed(2)}</td>
+                      <td>{formatarReal(p.quantidade * p.valorUnitario)}</td>
                     </tr>
                   ))}
+
+
                 </tbody>
               </table>
-              <h3>Valor total: R$ {calcularTotal(detalhePedido.produtos).toFixed(2)}</h3>
+              {/* <h3>Valor total: R$ {calcularTotal(detalhePedido.produtos).toFixed(2)}</h3> */}
               <div className={styles.actions}>
-                <button onClick={() => setDetalhePedido(null)}>Voltar</button>
+                <button onClick={() => setDetalhePedido(null)}>Fechar</button>
               </div>
             </div>
           </div>
-        )} */}
+        ) : ""}
 
         {/* MODAL CANCELAMENTO */}
         {pedidoCancelamento && (

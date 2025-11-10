@@ -132,14 +132,15 @@
 .produtosWrapper {
   flex: 1 1 auto;
   overflow-y: auto;
-  padding: 0 16px 180px 16px;
+  padding: 20px 16px 16px 16px;
   /* espaço pro footer fixo */
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - 220px);
+  max-height: calc(100vh - 100px);
   /* header + input + categorias */
   box-sizing: border-box;
   scroll-behavior: smooth;
+  /* padding: 20px; */
 }
 
 /* --- GRID DE PRODUTOS --- */

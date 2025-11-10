@@ -23,6 +23,8 @@ export const HomeView = () => {
   const dispatch = useDispatch();
   const isSidebarOpen = useSelector((state: RootState) => state.app.isSidebarOpen);
   const [categotiaSelecionada, setCategoriaSelecionada] = useState<ItemImageInterface>();
+  // const [produtosLista, setProdutosLista] = useState<ProdutoInterface[]>([]);
+  const [produtosOriginais, setProdutosOriginais] = useState<ProdutoInterface[]>([]);
   const [produtosLista, setProdutosLista] = useState<ProdutoInterface[]>([]);
   const [produtoSelecionado, setProdutoSelecionado] = useState<ProdutoInterface | null>(null);
   const user: UserInterface = useSelector(
@@ -53,6 +55,7 @@ export const HomeView = () => {
         if (produtosRes.status === 200) {
           const produtos = Array.isArray(produtosRes.data) ? produtosRes.data : [];
           setProdutosLista(produtos);
+          setProdutosOriginais(produtos)
         }
       } catch (error) {
 
@@ -96,24 +99,27 @@ export const HomeView = () => {
 
   const buscarProduto = (descricao: string) => {
     const normalizar = (texto: string) =>
-      texto
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase();
+      texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
     const termo = normalizar(descricao);
 
+    // 🧠 se o campo está vazio, mostra todos os produtos da categoria
     if (!termo.trim()) {
-      setProdutosLista(produtosLista?.filter((produto) => { return produto.categoriaId == categotiaSelecionada?.id })); // supondo que você tenha guardado a lista original
+      setProdutosLista(
+        produtosOriginais.filter(
+          (produto) => produto.categoriaId === categotiaSelecionada?.id
+        )
+      );
       return;
     }
 
-    const resultado = produtosLista?.filter((item) => {
+    const resultado = produtosOriginais.filter((item) => {
       const tituloNormalizado = normalizar(item.titulo);
       const descricaoNormalizada = normalizar(item.descricao || "");
       return (
-        tituloNormalizado.includes(termo) ||
-        descricaoNormalizada.includes(termo)
+        (item.categoriaId === categotiaSelecionada?.id) &&
+        (tituloNormalizado.includes(termo) ||
+          descricaoNormalizada.includes(termo))
       );
     });
 
@@ -132,21 +138,24 @@ export const HomeView = () => {
           device={device}
         />
 
-        {device == "mobile" ?
-          <>
-            <div className={styles.inputGroup}>
-              <input
-                type="text"
-                onFocus={() => { }}
-                onChange={(e) => {
-                  buscarProduto(e.target.value)
-                }}
-                placeholder="Buscar produto"
-                className={styles.input}
-              />
-            </div>
+        {/* {device == "mobile" ?
+          <> */}
+        {/* <div className={styles.inputGroup}>
+          <input
+            type="text"
+            onFocus={() => { }}
+            onChange={(e) => {
+              if (e.target.value != "") {
+                buscarProduto(e.target.value)
+              }
 
-            {categorias && categorias.length ?
+            }}
+            placeholder="Buscar produto"
+            className={styles.input}
+          />
+        </div> */}
+
+        {/* {categorias && categorias.length ?
               <div className={styles.containerItens}>
                 {categorias.length > 0 && categorias?.map((item) => (
                   <div
@@ -161,59 +170,59 @@ export const HomeView = () => {
               </div>
 
               : ""
-            }
+            } */}
 
 
-            <div>
-              <div style={{
+        <div>
+          {/* <div style={{
                 marginTop: "20px",
                 marginBottom: "8px",
                 fontSize: "1.2rem",
                 fontWeight: "bold",
                 paddingLeft: "16px"
-              }}>{categotiaSelecionada?.descricao}</div>
+              }}>{categotiaSelecionada?.descricao}</div> */}
 
 
-              {produtosLista && produtosLista.length ?
-                <div className={styles.produtosWrapper}>
-                  <div className={styles.produtosContainer}>
-                    {produtosLista.length > 0 &&  produtosLista?.map((item) => (
-                      <div
-                        key={item.id}
-                        className={styles.produtoCard}
-                        onClick={() => setProdutoSelecionado(item)}
-                      >
-                        <img
-                          src={`${URL_API_GESTAO}/produto/imagem/${item.id}`}
-                          alt={item.titulo}
-                          className={styles.produtoImagem}
-                        />
+          {produtosLista && produtosLista.length ?
+            <div className={styles.produtosWrapper}>
+              <div className={styles.produtosContainer}>
+                {produtosLista.length > 0 && produtosLista?.map((item) => (
+                  <div
+                    key={item.id}
+                    className={styles.produtoCard}
+                    onClick={() => setProdutoSelecionado(item)}
+                  >
+                    <img
+                      src={`${URL_API_GESTAO}/produto/imagem/${item.id}`}
+                      alt={item.titulo}
+                      className={styles.produtoImagem}
+                    />
 
-                        <div className={styles.produtoInfo}>
-                          <h3 className={styles.produtoTitulo}>{item.titulo}</h3>
-                          <p className={styles.produtoDescricao}>{item.descricao}</p>
-                          <p className={styles.produtoPreco}>{formatarReal(item.preco)}</p>
-                        </div>
-                      </div>
-                    ))}
-
-                    {produtoSelecionado && (
-                      <QuantidadeModal
-                        produto={produtoSelecionado}
-                        onConfirm={handleConfirmar}
-                        onClose={() => setProdutoSelecionado(null)}
-                      />
-                    )}
+                    <div className={styles.produtoInfo}>
+                      <h3 className={styles.produtoTitulo}>{item.titulo}</h3>
+                      <p className={styles.produtoDescricao}>{item.descricao}</p>
+                      <p className={styles.produtoPreco}>{formatarReal(item.preco)}</p>
+                    </div>
                   </div>
-                </div>
+                ))}
 
-                : ""
-              }
-
+                {produtoSelecionado && (
+                  <QuantidadeModal
+                    produto={produtoSelecionado}
+                    onConfirm={handleConfirmar}
+                    onClose={() => setProdutoSelecionado(null)}
+                  />
+                )}
+              </div>
             </div>
-          </>
 
-          : "Tela de desktop"}
+            : ""
+          }
+
+        </div>
+        {/* </>
+
+          : "Tela de desktop"} */}
       </div>
     </div>
   );

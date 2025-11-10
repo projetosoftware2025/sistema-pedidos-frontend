@@ -156,7 +156,7 @@ export const GestaoCadastros: React.FC = () => {
         </button>
         <button
           className={`${styles.tabButton} ${abaAtiva === "categorias" ? styles.active : ""}`}
-          onClick={() => setAbaAtiva("categorias")}
+          // onClick={() => setAbaAtiva("categorias")}
         >
           Categorias
         </button>
