@@ -10,6 +10,8 @@ import { toast } from "react-toastify";
 import { EllipsisVertical, Info } from "lucide-react";
 import { formatarReal } from "../../utils/formatarReal";
 
+import { Search } from "lucide-react";
+
 
 interface Produto {
   id: string;
@@ -49,7 +51,7 @@ interface FiltroInterface {
 }
 
 export default function GerenciamentoPedidos() {
-  const [pedidos, setPedidos] = useState<Pedido[]>();
+  const [pedidos, setPedidos] = useState<Pedido[] | null>();
   const dispatch = useDispatch()
   const hoje = new Date();
   const tresDiasAtras = new Date();
@@ -72,7 +74,8 @@ export default function GerenciamentoPedidos() {
   const [pedidoPix, setPedidoPix] = useState<Pedido | null>(null); // usado para exibir o modal do comprovante
   const [confirmar, setConfirmar] = useState<"confirmar" | "recusar" | null>(null);
   const isSidebarOpen = useSelector((state: RootState) => state.app.isSidebarOpen);
-  const [pedidoSelecionado, setPedidoSelecionado] = useState<Pedido>()
+  const [pedidoSelecionado, setPedidoSelecionado] = useState<Pedido>();
+  const [loading, setLoading] = useState(false);
 
   // === Fecha o menu ao clicar fora ===
   useEffect(() => {
@@ -128,17 +131,23 @@ export default function GerenciamentoPedidos() {
     produtos.reduce((acc, p) => acc + p.valorUnitario * p.quantidade, 0);
 
   const buscarPedidos = async () => {
+    setLoading(true);
+    setPedidos(null)
     try {
       const response = await axios.get(`https://sistema-pedidos-gestao-api.onrender.com/pedido/buscar-pedidos?dtInicio=${filtro.dataInicial}&dtFim=${filtro.dataFinal}`)
       if (response.data && response.status == 200) {
         setPedidos(response.data)
+
       } else if (response.status == 404) {
         toast.error("Pedidos não encotrados!")
       } else {
         toast.error("Pedidos não encotrados!")
       }
+
+      setLoading(false);
     } catch (error) {
       toast.error("Pedidos não encotrados!")
+      setLoading(false);
     }
   };
 
@@ -150,12 +159,32 @@ export default function GerenciamentoPedidos() {
       } else if (response.status == 404) {
         toast.error("Itens não encotrados!")
       } else {
-        toast.error("Itens não encotrados!")
+        toast.error("Erro ao buscar dados do pedido")
       }
     } catch (error) {
-      toast.error("Itens não encotrados!")
+      toast.error(`Erro na requisição: ${error}`)
     }
   };
+
+  const alterarStatusPedido = async (pedido: Pedido, status: string) => {
+    try {
+      const response = await axios.put(
+        `https://sistema-pedidos-gestao-api.onrender.com/pedido/atualizar-status?id=${pedido.id}&status=${status}`
+      );
+
+      if (response.status === 200) {
+        toast.success("Status atualizado com sucesso!");
+        return { ...pedido, status }; // retorna o objeto atualizado
+      } else if (response.status === 404) {
+        toast.error("Pedido não encontrado");
+      } else {
+        toast.error("Erro ao atualizar status do pedido");
+      }
+    } catch (error) {
+      toast.error(`Erro na requisição: ${error}`);
+    }
+  };
+
 
   return (
     <div className={styles.container}>
@@ -204,7 +233,9 @@ export default function GerenciamentoPedidos() {
               <option value="Cancelado">Cancelado</option>
             </select> */}
 
-            <button className={styles.buscar} onClick={buscarPedidos}>Buscar</button>
+            <button className={styles.buscar} onClick={buscarPedidos} disabled={loading}>
+              <Search width={20} height={20} />{" "}
+              Buscar</button>
           </form>
 
 
@@ -222,7 +253,7 @@ export default function GerenciamentoPedidos() {
               {/* <th>Qtd</th>
               <th>Valor</th> */}
               <th>Status</th>
-              <th>Detalhes</th>
+              <th>Opções</th>
             </tr>
           </thead>
           <tbody>
@@ -239,15 +270,36 @@ export default function GerenciamentoPedidos() {
                 {/* <td>{p.produtos.length}</td> */}
                 {/* <td>R$ {calcularTotal(p.produtos).toFixed(2)}</td> */}
                 <td>
-                  <span className={`${styles.status} ${styles[p.status]}`}>
+                  <span
+                    className={`${styles.status} ${styles[p.status]}`}
+                    style={{
+                      color:
+                        p.status === "A"
+                          ? "black"
+                          : "white",
+                      background:
+                        p.status === "A"
+                          ? "#F9A825" // amarelo
+                          : p.status === "P"
+                            ? "#43A047" // verde
+                            : p.status === "R"
+                              ? "#1976D2" // azul
+                              : p.status === "F"
+                                ? "#6A1B9A" // roxo
+                                : "#E53935", // vermelho
+                    }}
+                  >
                     {p.status === "A"
-                      ? "Andamento"
+                      ? "Aguardando Pagamento"
                       : p.status === "P"
-                        ? "Pronto"
-                        : p.status === "F"
-                          ? "Concluído"
-                          : "Cancelado"}
+                        ? "Pagamento Aprovado"
+                        : p.status === "R"
+                          ? "Pronto"
+                          : p.status === "F"
+                            ? "Finalizado"
+                            : "Cancelado"}
                   </span>
+
                 </td>
 
                 {/* ======= MENU DE OPÇÕES ======= */}
@@ -256,23 +308,92 @@ export default function GerenciamentoPedidos() {
                     className={styles.infoButton}
                     onClick={(e) => {
                       e.stopPropagation();
-                      // setMenuAtivo(menuAtivo === p.id ? 0 : p.id);
-                      buscarDadosPedido(p.id)
-                      setPedidoSelecionado(p)
+                      setMenuAtivo(menuAtivo === p.id ? 0 : p.id);
+                      // buscarDadosPedido(p.id)
+                      // setPedidoSelecionado(p)
                     }}
                   >
-                    <Info size={28} color="orange" />
+                    <EllipsisVertical size={28} color="orange" />
                   </button>
 
-                  {/* {menuAtivo === p.id && (
+                  {menuAtivo === p.id && (
                     <div className={styles.menu}>
                       <button onClick={() => {
                         buscarDadosPedido(p.id)
                         setPedidoSelecionado(p)
-                      }}>Visualizar pedido</button>
-                     
+                        setMenuAtivo(0);
+                      }}>
+                        Visualizar pedido
+                      </button>
+
+                      {p.formaPagamento == "Pix" || (p.status == "F" || p.status == "C") ? <button onClick={() => {
+
+                        setPedidoSelecionado(p)
+                      }}>
+                        Ver comprovante
+                      </button> : null}
+
+                      {(p.status !== "F" && p.status !== "C") ? (
+                        <button
+                          onClick={async () => {
+                            setMenuAtivo(0);
+                            const pedidoAtualizado = await alterarStatusPedido(p, "C");
+                            if (pedidoAtualizado) {
+                              setPedidos(prev =>
+                                pedidos.map(item =>
+                                  item.id === pedidoAtualizado.id ? pedidoAtualizado : item
+                                )
+                              );
+                            }
+                            
+                          }}
+                        >
+                          Cancelar pedido
+                        </button>
+
+                      ) : null}
+
+                      {p.status == "P"  ? (
+                      <button
+                        onClick={async () => {
+                          setMenuAtivo(0);
+                         const pedidoAtualizado = await alterarStatusPedido(p, "R");
+                            if (pedidoAtualizado) {
+                              setPedidos(prev =>
+                                pedidos.map(item =>
+                                  item.id === pedidoAtualizado.id ? pedidoAtualizado : item
+                                )
+                              );
+                            }
+                            
+                        }}
+                      >
+                        Chamar cliente
+                      </button>
+                      ) : null} 
+
+                      {p.status == "R" ? (
+                        <button
+                          onClick={async () => {
+                            setMenuAtivo(0);
+                            const pedidoAtualizado = await alterarStatusPedido(p, "F");
+                            if (pedidoAtualizado) {
+                              setPedidos(prev =>
+                                pedidos.map(item =>
+                                  item.id === pedidoAtualizado.id ? pedidoAtualizado : item
+                                )
+                              );
+                            }
+                            
+                          }}
+                        >
+                          Finalizar pedido
+                        </button>
+                      ) : null}
+
+
                     </div>
-                  )} */}
+                  )}
                 </td>
               </tr>
             ))}
