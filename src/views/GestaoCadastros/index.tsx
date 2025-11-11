@@ -5,6 +5,11 @@ import { Plus, Edit2, X } from "lucide-react";
 import { URL_API_GESTAO } from "../../utils/constants";
 import { ProdutoCadastroInterface } from "../../app/models/interfaces/ProdutoCadastroInterface";
 import { ItemImageInterface } from "../../app/models/interfaces/ItemImageInterface";
+import { SidebarComponent } from "../../components/SidebarComponent";
+import { HeaderComponent } from "../../components/Header";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { setSideBar } from "../../redux/reducers/appReducer";
 
 interface ProdutoLocal {
   id: number;
@@ -27,9 +32,12 @@ export const GestaoCadastros: React.FC = () => {
     categoria: "",
     imagem: null,
   });
+  const dispatch = useDispatch();
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [categorias, setCategorias] = useState<ItemImageInterface[]>([]);
+  const [confirmar, setConfirmar] = useState<"confirmar" | "recusar" | null>(null);
+  const isSidebarOpen = useSelector((state: RootState) => state.app.isSidebarOpen);
 
   useEffect(() => {
     const buscarCategorias = async () => {
@@ -142,9 +150,19 @@ export const GestaoCadastros: React.FC = () => {
   };
 
   return (
-    <div className={styles.page}>
-      <div className={styles.header}>
-        <h1>Gestão de Produtos</h1>
+
+    <div className={styles.container}>
+      <HeaderComponent device="desktop" />
+
+      <div className={styles.containerBox}>
+        <SidebarComponent
+          isOpen={isSidebarOpen}
+          onClose={() => dispatch(setSideBar(false))}
+          device={"desktop"}
+        />
+
+
+
       </div>
 
       <div className={styles.tabs}>
@@ -156,7 +174,7 @@ export const GestaoCadastros: React.FC = () => {
         </button>
         <button
           className={`${styles.tabButton} ${abaAtiva === "categorias" ? styles.active : ""}`}
-          // onClick={() => setAbaAtiva("categorias")}
+        // onClick={() => setAbaAtiva("categorias")}
         >
           Categorias
         </button>

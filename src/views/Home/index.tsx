@@ -16,6 +16,7 @@ import axios from "axios";
 import { URL_API_GESTAO } from "../../utils/constants";
 import { ProdutoInterface } from "../../app/models/interfaces/ProdutoInterface";
 import { ItemImageInterface } from "../../app/models/interfaces/ItemImageInterface";
+import { BarChart3, ClipboardList, Package, Users } from "lucide-react";
 
 export const HomeView = () => {
   const navigate = useNavigate();
@@ -183,7 +184,7 @@ export const HomeView = () => {
               }}>{categotiaSelecionada?.descricao}</div> */}
 
 
-          {produtosLista && produtosLista.length ?
+          {/* {produtosLista && produtosLista.length ?
             <div className={styles.produtosWrapper}>
               <div className={styles.produtosContainer}>
                 {produtosLista.length > 0 && produtosLista?.map((item) => (
@@ -217,7 +218,45 @@ export const HomeView = () => {
             </div>
 
             : ""
-          }
+          } */}
+
+          <main className={styles.container}>
+
+
+            <div className={styles.modulesGrid}>
+              <div
+                className={styles.moduleCard}
+                onClick={() => navigate("/gestao-pedidos")}
+              >
+                <ClipboardList className={styles.icon} />
+                <span>Gestão de Pedidos</span>
+              </div>
+
+              {/* <div
+                className={styles.moduleCard}
+                onClick={() => navigate("/gerenciamento-cadastro")}
+              >
+                <Users className={styles.icon} />
+                <span>Gestão de Cadastro</span>
+              </div> */}
+
+              <div
+                className={styles.moduleCard}
+                onClick={() => navigate("/gestao-cadastros")}
+              >
+                <Package className={styles.icon} />
+                <span>Produtos & Categorias</span>
+              </div>
+
+              {/* <div
+                className={styles.moduleCard}
+                onClick={() => navigate("/relatorios")}
+              >
+                <BarChart3 className={styles.icon} />
+                <span>Relatórios</span>
+              </div> */}
+            </div>
+          </main>
 
         </div>
         {/* </>

@@ -13,7 +13,6 @@ import { RedirectPage } from "../views/RedirectPage";
 import { GestaoCadastros } from "../views/GestaoCadastros";
 import { GestaoProdutos } from "../views/GestaoProdutos";
 import RedefinirSenha from "../views/RedefinirSenha";
-import { TeladeGestao } from "../views/TeladeGestao";
 
 export const AppRoutes = createBrowserRouter([
   {
@@ -64,11 +63,6 @@ export const AppRoutes = createBrowserRouter([
     path: "/gestao-pedidos",
     element: <GerenciamentoPedidos />,
   },
-  {
-    path: "/teladegestao",
-    element: <TeladeGestao />,
-  },
-
   {
     path: "/dados-pessoais",
     element: <DadosPessoais />,

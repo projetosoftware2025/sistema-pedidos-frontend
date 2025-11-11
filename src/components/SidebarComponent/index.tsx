@@ -32,7 +32,7 @@ export const SidebarComponent: React.FC<SidebarProps> = ({ isOpen, onClose, devi
         <ul>
           {device === "desktop" ? (
             <>
-            <li
+              <li
                 onClick={() => {
                   navigate("/");
                   onClose();
@@ -42,20 +42,28 @@ export const SidebarComponent: React.FC<SidebarProps> = ({ isOpen, onClose, devi
               </li>
               <li
                 onClick={() => {
+                  navigate("/meus-pedidos");
+                  onClose();
+                }}
+              >
+                Meus pedidos
+              </li>
+              <li
+                onClick={() => {
                   navigate("/gestao-pedidos");
                   onClose();
                 }}
               >
                 Gerenciamento de Pedidos
               </li>
-              {/* <li
+              <li
                 onClick={() => {
                   navigate("/gestao-cadastros");
                   onClose();
                 }}
               >
-                Gerenciamento de Cadastros
-              </li> */}
+                Produtos & Categorias
+              </li>
               <li
                 onClick={() => {
                   navigate("/login");
