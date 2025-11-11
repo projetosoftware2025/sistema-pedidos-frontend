@@ -6,15 +6,14 @@ import { MeusPedidos } from "../views/MeusPedidos";
 import { Carrinho } from "../views/Carrinho";
 import RecuperarAcesso from "../views/RecuperarAcesso";
 import { CodigoRecuperar } from "../views/CodigoRecuperar";
-
 import { TeladeFinalizacao } from "../views/TeladeFinalizacao";
-import  GerenciamentoPedidos  from "../views/GerenciamentoPedidos";
+import GerenciamentoPedidos from "../views/GerenciamentoPedidos";
 import { DadosPessoais } from "../views/DadosPessoais";
 import { RedirectPage } from "../views/RedirectPage";
 import { GestaoCadastros } from "../views/GestaoCadastros";
 import { GestaoProdutos } from "../views/GestaoProdutos";
 import RedefinirSenha from "../views/RedefinirSenha";
-
+import { TeladeGestao } from "../views/TeladeGestao";
 
 export const AppRoutes = createBrowserRouter([
   {
@@ -54,24 +53,28 @@ export const AppRoutes = createBrowserRouter([
     element: <TeladeFinalizacao />,
   },
   {
+    path: "/gestao-cadastros",
+    element: <GestaoCadastros />,
+  },
+  {
+    path: "/gestao-produtos",
+    element: <GestaoProdutos />,
+  },
+  {
+    path: "/gestao-pedidos",
+    element: <GerenciamentoPedidos />,
+  },
+  {
+    path: "/teladegestao",
+    element: <TeladeGestao />,
+  },
+
+  {
+    path: "/dados-pessoais",
+    element: <DadosPessoais />,
+  },
+  {
     path: "*",
     element: <RedirectPage />,
   },
-  {
-    path: "gestao-cadastros",
-    element: <GestaoCadastros/>
-  },
-  {
-    path: "gestao-produtos",
-    element: <GestaoProdutos/>
-  },
-  {
-    path: "gestao-pedidos",
-    element: <GerenciamentoPedidos/>
-  },
-    {
-    path: "dados-pessoais",
-    element: <DadosPessoais/>
-  },
-
 ]);
