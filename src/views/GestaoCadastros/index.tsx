@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
 import styles from "./index.module.css";
-import { Plus, Edit2, X } from "lucide-react";
+import { Plus, Edit2, X, Trash } from "lucide-react";
 import { URL_API_GESTAO } from "../../utils/constants";
 import { ProdutoCadastroInterface } from "../../app/models/interfaces/ProdutoCadastroInterface";
 import { ItemImageInterface } from "../../app/models/interfaces/ItemImageInterface";
@@ -16,62 +16,81 @@ interface ProdutoLocal {
   titulo: string;
   descricao: string;
   preco: string;
-  categoria: string;
+  ativo?: boolean;
+  categoriaId: string;
   imagem: File | null;
 }
 
 export const GestaoCadastros: React.FC = () => {
   const [abaAtiva, setAbaAtiva] = useState<"produtos" | "categorias">("produtos");
   const [produtos, setProdutos] = useState<ProdutoLocal[]>([]);
+  const [categorias, setCategorias] = useState<ItemImageInterface[]>([]);
   const [modalAberto, setModalAberto] = useState(false);
   const [editando, setEditando] = useState<ProdutoLocal | null>(null);
   const [produto, setProduto] = useState<ProdutoCadastroInterface>({
+    id: 0,
     titulo: "",
     descricao: "",
     preco: "",
     categoria: "",
     imagem: null,
   });
-  const dispatch = useDispatch();
+  const [categoriaDescricao, setCategoriaDescricao] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [categorias, setCategorias] = useState<ItemImageInterface[]>([]);
-  const [confirmar, setConfirmar] = useState<"confirmar" | "recusar" | null>(null);
+  const dispatch = useDispatch();
   const isSidebarOpen = useSelector((state: RootState) => state.app.isSidebarOpen);
 
-  useEffect(() => {
-    const buscarCategorias = async () => {
-      try {
-        const response = await axios.get(`${URL_API_GESTAO}/categoria/buscar-categorias`);
-        if (response.status === 200) {
-          const data = Array.isArray(response.data) ? response.data : [];
-          setCategorias(data);
-          if (data.length > 0) {
-            setProduto(prev => ({ ...prev, categoria: String(data[0].id) }));
-          }
+  // 🔄 Buscar produtos
+  const buscarProdutos = async () => {
+    try {
+      const response = await axios.get(`${URL_API_GESTAO}/produto/buscar-produtos`);
+      if (response.status === 200) setProdutos(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar produtos:", error);
+    }
+  };
+
+  // 🔄 Buscar categorias
+  const buscarCategorias = async () => {
+    try {
+      const response = await axios.get(`${URL_API_GESTAO}/categoria/buscar-categorias`);
+      if (response.status === 200) {
+        const data = Array.isArray(response.data) ? response.data : [];
+        setCategorias(data);
+        if (data.length > 0) {
+          setProduto((prev) => ({ ...prev, categoria: String(data[0].id) }));
         }
-      } catch (error) {
-        console.error("Erro ao buscar categorias:", error);
       }
-    };
+    } catch (error) {
+      console.error("Erro ao buscar categorias:", error);
+    }
+  };
+
+  useEffect(() => {
     buscarCategorias();
+    buscarProdutos();
   }, []);
 
+  const filtraCategoria = (id: string) => {
+    const categoria = categorias.find((c) => c.id.toString() === id.toString());
+    return categoria ? categoria.descricao : "—";
+  };
+
+  // 🟢 Abrir modal de produto
   const abrirModal = (p?: ProdutoLocal) => {
     if (p) {
       setEditando(p);
       setProduto({
+        id: p.id,
         titulo: p.titulo,
         descricao: p.descricao,
         preco: p.preco,
-        categoria: p.categoria,
+        categoria: p.categoriaId,
         imagem: p.imagem,
       });
-      if (p.imagem) {
-        setPreview(URL.createObjectURL(p.imagem));
-      } else {
-        setPreview(null);
-      }
+      if (p.imagem) setPreview(URL.createObjectURL(p.imagem));
+      else setPreview(null);
     } else {
       setEditando(null);
       setProduto({
@@ -95,16 +114,17 @@ export const GestaoCadastros: React.FC = () => {
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setProduto(prev => ({ ...prev, [name]: value }));
+    setProduto((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    setProduto(prev => ({ ...prev, imagem: file }));
+    setProduto((prev) => ({ ...prev, imagem: file }));
     if (file) setPreview(URL.createObjectURL(file));
     else setPreview(null);
   };
 
+  // 💾 Salvar produto (novo ou editar)
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { titulo, descricao, preco, categoria, imagem } = produto;
@@ -112,45 +132,109 @@ export const GestaoCadastros: React.FC = () => {
       alert("Preencha todos os campos obrigatórios!");
       return;
     }
-
-    const formData = new FormData();
-    formData.append("titulo", titulo);
-    formData.append("descricao", descricao);
-    formData.append("preco", preco);
-    formData.append("categoria", categoria);
-    if (imagem) formData.append("imagem", imagem);
-
     setLoading(true);
+
     try {
-      const response = await axios.post(`${URL_API_GESTAO}/produto/cadastrar`, formData);
-      alert(response.data);
+      let response;
+
+      if (editando) {
+        const payload = {
+          titulo,
+          descricao,
+          preco: parseFloat(preco.toString()),
+          categoria,
+          ativo: editando.ativo ?? true,
+        };
+
+        response = await axios.put(
+          `${URL_API_GESTAO}/produto/atualizar?id=${editando.id}`,
+          payload,
+          { headers: { "Content-Type": "application/json" } }
+        );
+      } else {
+        const formData = new FormData();
+        formData.append("titulo", titulo);
+        formData.append("descricao", descricao);
+        formData.append("preco", preco);
+        formData.append("categoria", categoria);
+        formData.append("ativo", "true");
+        if (imagem) formData.append("imagem", imagem);
+
+        response = await axios.post(`${URL_API_GESTAO}/produto/cadastrar`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      }
 
       const novoProduto: ProdutoLocal = {
         id: editando ? editando.id : produtos.length + 1,
         titulo,
         descricao,
         preco,
-        categoria,
         imagem: imagem || null,
+        categoriaId: categoria,
+        ativo: editando ? editando.ativo : true,
       };
 
-      if (editando) {
-        setProdutos(prev => prev.map(p => (p.id === editando.id ? novoProduto : p)));
-      } else {
-        setProdutos(prev => [...prev, novoProduto]);
-      }
+      setProdutos((prev) =>
+        editando
+          ? prev.map((p) => (p.id === editando.id ? novoProduto : p))
+          : [...prev, novoProduto]
+      );
 
       fecharModal();
+      alert(response.data?.mensagem || "Produto salvo com sucesso!");
     } catch (error) {
-      console.error("Erro ao cadastrar produto:", error);
-      alert("Erro ao cadastrar produto. Tente novamente.");
+      console.error("Erro ao salvar produto:", error);
+      alert("Erro ao salvar produto. Tente novamente.");
     } finally {
       setLoading(false);
     }
   };
 
-  return (
+  // 🗑️ Desativar (lixeira)
+  const desativarProduto = async (p: ProdutoLocal) => {
+    if (!window.confirm(`Deseja desativar o produto "${p.titulo}"?`)) return;
+    try {
+      const payload = {
+        titulo: p.titulo,
+        descricao: p.descricao,
+        preco: parseFloat(p.preco.toString()),
+        categoria: p.categoriaId,
+        ativo: false,
+      };
 
+      await axios.put(`${URL_API_GESTAO}/produto/atualizar?id=${p.id}`, payload, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      alert("Produto desativado com sucesso!");
+      buscarProdutos();
+    } catch (error) {
+      console.error("Erro ao desativar produto:", error);
+      alert("Erro ao desativar produto!");
+    }
+  };
+
+  // ➕ Cadastrar categoria
+  const cadastrarCategoria = async () => {
+    if (!categoriaDescricao.trim()) {
+      alert("Digite uma descrição para a categoria!");
+      return;
+    }
+    try {
+      await axios.post(`${URL_API_GESTAO}/categoria/cadastrar`, {
+        descricao: categoriaDescricao,
+      });
+      alert("Categoria cadastrada com sucesso!");
+      setCategoriaDescricao("");
+      buscarCategorias();
+    } catch (error) {
+      console.error("Erro ao cadastrar categoria:", error);
+      alert("Erro ao cadastrar categoria.");
+    }
+  };
+
+  return (
     <div className={styles.container}>
       <HeaderComponent device="desktop" />
 
@@ -161,113 +245,196 @@ export const GestaoCadastros: React.FC = () => {
           device={"desktop"}
         />
 
-
-
-      </div>
-
-      <div className={styles.tabs}>
-        <button
-          className={`${styles.tabButton} ${abaAtiva === "produtos" ? styles.active : ""}`}
-          onClick={() => setAbaAtiva("produtos")}
-        >
-          Produtos
-        </button>
-        <button
-          className={`${styles.tabButton} ${abaAtiva === "categorias" ? styles.active : ""}`}
-        // onClick={() => setAbaAtiva("categorias")}
-        >
-          Categorias
-        </button>
-      </div>
-
-      {abaAtiva === "produtos" && (
-        <div className={styles.content}>
-          <div className={styles.toolbar}>
-            <button className={styles.addBtn} onClick={() => abrirModal()}>
-              <Plus size={18} /> Novo Produto
+        <div className={styles.filters}>
+          <h1 className={styles.title}>Produtos & Categorias</h1>
+          <div className={styles.tabs}>
+            <button
+              className={`${styles.tabButton} ${abaAtiva === "produtos" ? styles.active : ""}`}
+              onClick={() => {
+                setAbaAtiva("produtos");
+                buscarProdutos();
+              }}
+            >
+              Produtos
+            </button>
+            <button
+              className={`${styles.tabButton} ${abaAtiva === "categorias" ? styles.active : ""}`}
+              onClick={() => setAbaAtiva("categorias")}
+            >
+              Categorias
             </button>
           </div>
-
-          <div className={styles.tableWrapper}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Título</th>
-                  <th>Descrição</th>
-                  <th>Preço</th>
-                  <th>Categoria</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {produtos.map(p => (
-                  <tr key={p.id}>
-                    <td>{p.titulo}</td>
-                    <td>{p.descricao}</td>
-                    <td>R$ {Number(p.preco).toFixed(2).replace(".", ",")}</td>
-                    <td>
-                      {categorias.find(c => String(c.id) === p.categoria)?.descricao || "-"}
-                    </td>
-                    <td>
-                      <button className={styles.editBtn} onClick={() => abrirModal(p)}>
-                        <Edit2 size={16} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </div>
-      )}
 
-      {abaAtiva === "categorias" && (
-        <div className={styles.content}>
-          <p>Gestão de categorias virá aqui...</p>
-        </div>
-      )}
-
-      {modalAberto && (
-        <div className={styles.modalOverlay} onClick={fecharModal}>
-          <div className={styles.modal} onClick={e => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <h2>{editando ? "Editar Produto" : "Novo Produto"}</h2>
-              <button className={styles.closeBtn} onClick={fecharModal}>
-                <X size={22} />
+        {/* 🧱 PRODUTOS */}
+        {abaAtiva === "produtos" && (
+          <div className={styles.content}>
+            <div className={styles.toolbar}>
+              <button className={styles.addBtn} onClick={() => abrirModal()}>
+                <Plus size={18} /> Novo Produto
               </button>
             </div>
 
-            <form className={styles.modalBody} onSubmit={handleSubmit}>
-              <label>Título:</label>
-              <input type="text" name="titulo" value={produto.titulo} onChange={handleChange} required />
+            {produtos.length ? (
+              <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Título</th>
+                      <th>Descrição</th>
+                      <th>Preço</th>
+                      <th>Status</th>
+                      <th>Categoria</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {produtos.map((p) => (
+                      <tr key={p.id}>
+                        <td>{p.id}</td>
+                        <td>{p.titulo}</td>
+                        <td>{p.descricao}</td>
+                        <td>R$ {Number(p.preco).toFixed(2).replace(".", ",")}</td>
+                        <td>{p.ativo ? "Ativo" : "Inativo"}</td>
+                        <td>{filtraCategoria(p.categoriaId)}</td>
+                        <td>
+                          <button className={styles.editBtn} onClick={() => abrirModal(p)}>
+                            <Edit2 size={16} />
+                          </button>
+                          <button
+                            className={styles.trashBtn}
+                            onClick={() => desativarProduto(p)}
+                            title="Desativar produto"
+                          >
+                            <Trash size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              "Sem produtos"
+            )}
+          </div>
+        )}
 
-              <label>Descrição:</label>
-              <textarea name="descricao" value={produto.descricao} onChange={handleChange} rows={3} required />
+        {/* 🧱 CATEGORIAS */}
+        {abaAtiva === "categorias" && (
+          <div className={styles.content}>
+            <div className={styles.addCategoria}>
+              <input
+                type="text"
+                value={categoriaDescricao}
+                onChange={(e) => setCategoriaDescricao(e.target.value)}
+                placeholder="Nova categoria..."
+              />
+              <button onClick={cadastrarCategoria} className={styles.addBtn}>
+                <Plus size={18} /> Adicionar
+              </button>
+            </div>
 
-              <label>Preço:</label>
-              <input type="number" name="preco" value={produto.preco} onChange={handleChange} step="0.01" required />
+            {categorias.length ? (
+              <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Descrição</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {categorias.map((c) => (
+                      <tr key={c.id}>
+                        <td>{c.id}</td>
+                        <td>{c.descricao}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              "Sem categorias"
+            )}
+          </div>
+        )}
 
-              <label>Categoria:</label>
-              <select name="categoria" value={produto.categoria} onChange={handleChange} required>
-                <option value="" disabled>Selecione uma Categoria</option>
-                {categorias.map(c => (
-                  <option key={c.id} value={c.id}>{c.descricao}</option>
-                ))}
-              </select>
-
-              <label>Imagem:</label>
-              <input type="file" accept="image/*" onChange={handleFileChange} />
-              {preview && <img src={preview} alt="Pré-visualização" className={styles.previewImg} />}
-
-              <div className={styles.modalFooter}>
-                <button type="submit" className={styles.saveBtn} disabled={loading}>
-                  {loading ? "Salvando..." : editando ? "Salvar Alterações" : "Cadastrar Produto"}
+        {/* 🧩 MODAL DE PRODUTO */}
+        {modalAberto && (
+          <div className={styles.modalOverlay} onClick={fecharModal}>
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+              <div className={styles.modalHeader}>
+                <h2>{editando ? "Editar Produto" : "Novo Produto"}</h2>
+                <button className={styles.closeBtn} onClick={fecharModal}>
+                  <X size={22} />
                 </button>
               </div>
-            </form>
+
+              <form className={styles.modalBody} onSubmit={handleSubmit}>
+                <label>Título:</label>
+                <input
+                  type="text"
+                  name="titulo"
+                  value={produto.titulo}
+                  onChange={handleChange}
+                  placeholder="Nome do produto"
+                  required
+                />
+
+                <label>Descrição:</label>
+                <textarea
+                  name="descricao"
+                  value={produto.descricao}
+                  onChange={handleChange}
+                  placeholder="Descrição do produto"
+                  rows={3}
+                  required
+                />
+
+                <label>Preço:</label>
+                <input
+                  type="number"
+                  name="preco"
+                  value={produto.preco}
+                  placeholder="Ex: 2.0"
+                  onChange={handleChange}
+                  step="0.01"
+                  required
+                />
+
+                <label>Categoria:</label>
+                <select name="categoria" value={produto.categoria} onChange={handleChange} required>
+                  <option value="" disabled>
+                    Selecione uma Categoria
+                  </option>
+                  {categorias.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.descricao}
+                    </option>
+                  ))}
+                </select>
+
+                <label>Imagem:</label>
+                <input type="file" accept="image/*" onChange={handleFileChange} />
+
+                {preview && <img src={preview} alt="Pré-visualização" className={styles.previewImg} />}
+
+                <div className={styles.modalFooter}>
+                  <button type="submit" className={styles.saveBtn} disabled={loading}>
+                    {loading
+                      ? "Salvando..."
+                      : editando
+                      ? "Salvar Alterações"
+                      : "Cadastrar Produto"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

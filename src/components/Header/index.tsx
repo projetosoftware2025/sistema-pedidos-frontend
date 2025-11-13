@@ -1,16 +1,15 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./index.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { resetAuth, setUser } from "../../redux/reducers/authReducer";
 import { UserInterface } from "../../app/models/interfaces/UserInterface";
 import { RootState } from "../../redux/store";
-import { tokenService } from "../../app/services/user/loginByTokenUser";
-import { ShoppingBag, Menu, MarsStroke, X } from "lucide-react";
+import { ShoppingBag, Menu, MarsStroke, X, DoorClosed, DoorOpen, Outdent, LogOut, LogOutIcon, BotOff, PowerOff, PowerOffIcon } from "lucide-react";
 import logo from "../../assets/logo.png";
 import { setSideBar } from "../../redux/reducers/appReducer";
-import { CartItemInterface } from "../../redux/reducers/cartReducer";
 import { DeviceType } from "../../app/models/types/DeviceType";
+import { toast } from "react-toastify";
+import { resetAuth } from "../../redux/reducers/authReducer";
 
 interface HeaderProps {
   device: DeviceType
@@ -25,47 +24,17 @@ export const HeaderComponent: React.FC<HeaderProps> = ({ device }) => {
     (state: RootState) => state.auth.user
   );
 
-  const cartProdutos: CartItemInterface[] = useSelector(
-    (state: RootState) => state.cart.cartProdutos
-  );
-
   useEffect(() => {
-    // const handleStorageChange = () => {
-    //   const token = localStorage.getItem("token");
-    //   if (token) {
-    //     validateToken(token);
-    //   }
-    // };
 
-    // const validateToken = async (token: string) => {
-    //   try {
-    //     const response = await tokenService(token);
-    //     if (response.status === "error") {
-    //       navigate("/login");
-    //       return;
-    //     }
-    //     dispatch(setUser(response.data));
-    //   } catch (error) {
-    //     console.error("Erro ao validar token:", error);
-    //     navigate("/login");
-    //   }
-    // };
-
-    // window.addEventListener("storage", handleStorageChange);
-    // handleStorageChange();
-
-    // return () => {
-    //   window.removeEventListener("storage", handleStorageChange);
-    // };
-
+    const checkUser = () => {
+      if (!user.logado) {
+        toast.error("Sessão encerrada! Faça login para prosseguir.")
+        navigate("/login")
+      }
+    }
+    checkUser()
     dispatch(setSideBar(false))
-  }, [navigate, dispatch]);
-
-  const handleUserOut = () => {
-    dispatch(resetAuth());
-    localStorage.setItem("token", "");
-    navigate("/login");
-  };
+  }, [navigate, dispatch, user]);
 
   return (
     <>
@@ -83,12 +52,22 @@ export const HeaderComponent: React.FC<HeaderProps> = ({ device }) => {
           <img src={logo} alt="Logo SuculentuS" className={styles.logo} />
         </div>
 
-        {/* {device == "mobile" ? */}
-          <div className={styles.cartContainer} onClick={() => {navigate("/carrinho")}}>
-            <ShoppingBag size={28} color="white" />
-            <div className={styles.cartNumber}>{cartProdutos.length}</div>
+        <div className={styles.cartContainer}>
+          <div className={styles.nameUser}>Olá, {user.usuario} </div>  {" "} 
+          |
+
+          <div
+            className={styles.menuIcon}
+            title="Sair"
+            onClick={() => {
+              navigate("/login")
+              dispatch(resetAuth());
+              toast.info("Sessão encerrada.")
+            }}
+          >
+            <PowerOffIcon size={22} color="white" />
           </div>
-        {/* : null} */}
+        </div>
       </div>
 
     </>

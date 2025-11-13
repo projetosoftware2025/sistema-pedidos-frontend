@@ -7,9 +7,12 @@ import background from '../../assets/background.png';
 import { URL_API_USERS } from '../../utils/constants';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../redux/reducers/authReducer';
 
 export const LoginView: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [usuario, setUsuario] = useState('');
   const [senha, setSenha] = useState('');
   const [senhaVisivel, setSenhaVisivel] = useState(false);
@@ -27,6 +30,7 @@ export const LoginView: React.FC = () => {
       });
 
       if (response.status === 200) {
+        dispatch(setUser(response.data))
         toast.success("Login realizado com sucesso!");
         navigate('/');
       } else {

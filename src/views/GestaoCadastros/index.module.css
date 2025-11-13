@@ -7,14 +7,36 @@
   /* padding: 20px; */
 }
 
-.containerBox{
+.containerBox {
   padding: 20px;
+}
+
+/* ======== FILTROS ======== */
+.filters {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  width: 60%;
+  margin-bottom: 20px;
+}
+
+.filters form{
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px
+}
+
+.title {
+  text-align: start;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
 }
 
 .tabs {
   display: flex;
-  justify-content: center;
-  margin: 16px 0;
+  /* justify-content: center; */
+  /* margin: 16px 0; */
   gap: 8px;
 }
 
@@ -67,7 +89,8 @@
   border-collapse: collapse;
 }
 
-.table th, .table td {
+.table th,
+.table td {
   padding: 8px 12px;
   text-align: left;
   border-bottom: 1px solid #ddd;
@@ -89,7 +112,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -124,7 +147,9 @@
   margin-top: 12px;
 }
 
-.modalBody input, .modalBody textarea, .modalBody select {
+.modalBody input,
+.modalBody textarea,
+.modalBody select {
   padding: 8px 10px;
   border-radius: 8px;
   border: 1px solid #ddd;
@@ -171,6 +196,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

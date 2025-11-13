@@ -50,22 +50,18 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  gap: 10px
 }
 
 /* Número do carrinho */
-.cartNumber {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: black;
-  border: 1px solid white;
+.nameUser {
+  /* position: absolute; */
   color: white;
   font-size: 12px;
   font-weight: bold;
   height: 18px;
-  width: 18px;
+  /* width: 18px; */
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
 }
