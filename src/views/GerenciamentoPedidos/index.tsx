@@ -68,6 +68,8 @@ export default function GerenciamentoPedidos() {
   });
 
   const [menuAtivo, setMenuAtivo] = useState<number>();
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
+
   const [detalhePedido, setDetalhePedido] = useState<ItensPedidosInterface[] | null>(null);
   const [pedidoCancelamento, setPedidoCancelamento] = useState<Pedido | null>(null);
   const [motivo, setMotivo] = useState("");
@@ -308,13 +310,42 @@ export default function GerenciamentoPedidos() {
                     className={styles.infoButton}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setMenuAtivo(menuAtivo === p.id ? 0 : p.id);
-                      // buscarDadosPedido(p.id)
-                      // setPedidoSelecionado(p)
+
+                      const target = e.currentTarget as HTMLElement;
+                      const rect = target.getBoundingClientRect();
+
+                      // largura estimada do menu (ajuste se mudar CSS)
+                      const menuWidth = 200;
+                      const menuHeightEstimate = 260; // estimativa para verificar overflow vertical
+
+                      // deslocamento vertical para ficar "um pouco mais abaixo"
+                      const offsetY = 20;
+
+                      // calc left: alinhar o menu à direita do botão (ajuste se quiser)
+                      let left = rect.right - menuWidth;
+                      if (left + menuWidth > window.innerWidth - 12) {
+                        left = window.innerWidth - menuWidth - 12;
+                      }
+                      if (left < 8) left = 8;
+
+                      // calc top: preferencialmente abaixo, se não couber coloca acima
+                      let top = rect.bottom + offsetY;
+                      if (top + menuHeightEstimate > window.innerHeight - 12) {
+                        // não cabe embaixo → posiciona acima do botão
+                        top = rect.top - offsetY - menuHeightEstimate;
+                        // se ainda assim ficar negativo, força um padding
+                        if (top < 8) top = 8;
+                      }
+
+                      setMenuPos({ top: Math.round(top), left: Math.round(left) });
+
+                      // alterna
+                      setMenuAtivo((prev) => (prev === p.id ? 0 : p.id));
                     }}
                   >
                     <EllipsisVertical size={28} color="orange" />
                   </button>
+
 
                   {menuAtivo === p.id && (
                     <div className={styles.menu}>
@@ -326,12 +357,31 @@ export default function GerenciamentoPedidos() {
                         Visualizar pedido
                       </button>
 
-                      {p.formaPagamento == "Pix" || (p.status == "F" || p.status == "C") ? <button onClick={() => {
+                      {/* {p.formaPagamento == "Pix" || (p.status == "F" || p.status == "C") ? <button onClick={() => {
 
                         setPedidoSelecionado(p)
                       }}>
                         Ver comprovante
-                      </button> : null}
+                      </button> : null} */}
+
+                      {p.status == "A" ? (
+                        <button
+                          onClick={async () => {
+                            setMenuAtivo(0);
+                            const pedidoAtualizado = await alterarStatusPedido(p, "P");
+                            if (pedidoAtualizado) {
+                              setPedidos(prev =>
+                                pedidos.map(item =>
+                                  item.id === pedidoAtualizado.id ? pedidoAtualizado : item
+                                )
+                              );
+                            }
+                          }}
+                        >
+                          Aprovar pagamento
+                        </button>
+
+                      ) : null}
 
                       {(p.status !== "F" && p.status !== "C") ? (
                         <button
@@ -345,7 +395,7 @@ export default function GerenciamentoPedidos() {
                                 )
                               );
                             }
-                            
+
                           }}
                         >
                           Cancelar pedido
@@ -353,11 +403,11 @@ export default function GerenciamentoPedidos() {
 
                       ) : null}
 
-                      {p.status == "P"  ? (
-                      <button
-                        onClick={async () => {
-                          setMenuAtivo(0);
-                         const pedidoAtualizado = await alterarStatusPedido(p, "R");
+                      {p.status == "P" ? (
+                        <button
+                          onClick={async () => {
+                            setMenuAtivo(0);
+                            const pedidoAtualizado = await alterarStatusPedido(p, "R");
                             if (pedidoAtualizado) {
                               setPedidos(prev =>
                                 pedidos.map(item =>
@@ -365,12 +415,12 @@ export default function GerenciamentoPedidos() {
                                 )
                               );
                             }
-                            
-                        }}
-                      >
-                        Chamar cliente
-                      </button>
-                      ) : null} 
+
+                          }}
+                        >
+                          Chamar cliente
+                        </button>
+                      ) : null}
 
                       {p.status == "R" ? (
                         <button
@@ -384,7 +434,7 @@ export default function GerenciamentoPedidos() {
                                 )
                               );
                             }
-                            
+
                           }}
                         >
                           Finalizar pedido

@@ -92,12 +92,28 @@
 .table th,
 .table td {
   padding: 8px 12px;
-  text-align: left;
+  text-align: center;
   border-bottom: 1px solid #ddd;
+}
+
+.btnsAcao{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px
 }
 
 .editBtn {
   background: #ff8a00;
+  border: none;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+}
+
+.trashBtn{
+    background: #d01616;
   border: none;
   padding: 6px;
   border-radius: 6px;

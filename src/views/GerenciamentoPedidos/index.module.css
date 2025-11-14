@@ -131,10 +131,11 @@
 
 /* ======== BOTÕES DE AÇÃO ======== */
 .acoes {
-  /* position: relative; */
+  position: relative;
   display: flex;
   justify-content: center;
 }
+
 
 .infoButton {
   /* background: #02152d; */
@@ -157,18 +158,17 @@
 /* ======== MENU OPÇÕES ======== */
 .menu {
   position: fixed;
-  top: 350px;
-  right: 20;
   background: white;
   border: 1px solid #ddd;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   display: flex;
-  align-items: center;
   flex-direction: column;
   min-width: 180px;
-  /* z-index: 100; */
+  z-index: 9999;
 }
+
+
 
 .menu button {
   padding: 10px;

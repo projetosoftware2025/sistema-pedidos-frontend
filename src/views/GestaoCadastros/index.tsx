@@ -27,6 +27,10 @@ export const GestaoCadastros: React.FC = () => {
   const [categorias, setCategorias] = useState<ItemImageInterface[]>([]);
   const [modalAberto, setModalAberto] = useState(false);
   const [editando, setEditando] = useState<ProdutoLocal | null>(null);
+  const [modalCategoria, setModalCategoria] = useState(false);
+  const [imagemCategoria, setImagemCategoria] = useState<File | null>(null);
+  const [loadingCategoria, setLoadingCategoria] = useState(false);
+
   const [produto, setProduto] = useState<ProdutoCadastroInterface>({
     id: 0,
     titulo: "",
@@ -128,43 +132,55 @@ export const GestaoCadastros: React.FC = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { titulo, descricao, preco, categoria, imagem } = produto;
+
     if (!titulo || !descricao || !preco || !categoria) {
       alert("Preencha todos os campos obrigatórios!");
       return;
     }
+
     setLoading(true);
 
     try {
       let response;
 
+      // SE FOR EDIÇÃO
       if (editando) {
-        const payload = {
-          titulo,
-          descricao,
-          preco: parseFloat(preco.toString()),
-          categoria,
-          ativo: editando.ativo ?? true,
-        };
+        const formData = new FormData();
+        formData.append("titulo", titulo);
+        formData.append("descricao", descricao);
+        formData.append("preco", preco.toString());
+        formData.append("categoria", categoria);
+        formData.append("ativo", editando.ativo ? "true" : "false");
+
+        if (imagem) formData.append("imagem", imagem);
 
         response = await axios.put(
           `${URL_API_GESTAO}/produto/atualizar?id=${editando.id}`,
-          payload,
-          { headers: { "Content-Type": "application/json" } }
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
         );
-      } else {
+      }
+
+
+      // SE FOR CRIAÇÃO
+      else {
         const formData = new FormData();
         formData.append("titulo", titulo);
         formData.append("descricao", descricao);
         formData.append("preco", preco);
         formData.append("categoria", categoria);
         formData.append("ativo", "true");
+
         if (imagem) formData.append("imagem", imagem);
 
-        response = await axios.post(`${URL_API_GESTAO}/produto/cadastrar`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        response = await axios.post(
+          `${URL_API_GESTAO}/produto/cadastrar`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
       }
 
+      // Atualiza lista local
       const novoProduto: ProdutoLocal = {
         id: editando ? editando.id : produtos.length + 1,
         titulo,
@@ -183,6 +199,7 @@ export const GestaoCadastros: React.FC = () => {
 
       fecharModal();
       alert(response.data?.mensagem || "Produto salvo com sucesso!");
+
     } catch (error) {
       console.error("Erro ao salvar produto:", error);
       alert("Erro ao salvar produto. Tente novamente.");
@@ -190,6 +207,7 @@ export const GestaoCadastros: React.FC = () => {
       setLoading(false);
     }
   };
+
 
   // 🗑️ Desativar (lixeira)
   const desativarProduto = async (p: ProdutoLocal) => {
@@ -233,6 +251,59 @@ export const GestaoCadastros: React.FC = () => {
       alert("Erro ao cadastrar categoria.");
     }
   };
+
+  const salvarCategoria = async () => {
+    if (!categoriaDescricao.trim()) {
+      alert("Descrição obrigatória!");
+      return;
+    }
+
+    setLoadingCategoria(true);
+
+    try {
+      const form = new FormData();
+      form.append("descricao", categoriaDescricao);
+      if (imagemCategoria) form.append("imagem", imagemCategoria);
+
+      let response;
+
+      if (!editando) {
+        response = await axios.post(`${URL_API_GESTAO}/categoria/cadastrar`, form, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        response = await axios.put(
+          `${URL_API_GESTAO}/categoria/${editando.id}`,
+          form,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+      }
+
+      alert(response.data?.mensagem || "Categoria salva!");
+      setModalCategoria(false);
+      buscarCategorias();
+
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao salvar categoria.");
+    } finally {
+      setLoadingCategoria(false);
+    }
+  };
+
+  const desativarCategoria = async (categoria: any) => {
+    if (!window.confirm(`Desativar categoria "${categoria.descricao}"?`)) return;
+
+    try {
+      await axios.delete(`${URL_API_GESTAO}/categoria/deletar/${categoria.id}`);
+      alert("Categoria desativada!");
+      buscarCategorias();
+    } catch {
+      alert("Erro ao desativar categoria!");
+    }
+  };
+
+
 
   return (
     <div className={styles.container}>
@@ -299,16 +370,19 @@ export const GestaoCadastros: React.FC = () => {
                         <td>{p.ativo ? "Ativo" : "Inativo"}</td>
                         <td>{filtraCategoria(p.categoriaId)}</td>
                         <td>
-                          <button className={styles.editBtn} onClick={() => abrirModal(p)}>
-                            <Edit2 size={16} />
-                          </button>
-                          <button
-                            className={styles.trashBtn}
-                            onClick={() => desativarProduto(p)}
-                            title="Desativar produto"
-                          >
-                            <Trash size={16} />
-                          </button>
+                          <div className={styles.btnsAcao}>
+                            <button className={styles.editBtn} onClick={() => abrirModal(p)}>
+                              <Edit2 size={16} />
+                            </button>
+                            <button
+                              className={styles.trashBtn}
+                              onClick={() => desativarProduto(p)}
+                              title="Desativar produto"
+                            >
+                              <Trash size={16} />
+                            </button>
+                          </div>
+
                         </td>
                       </tr>
                     ))}
@@ -321,18 +395,18 @@ export const GestaoCadastros: React.FC = () => {
           </div>
         )}
 
-        {/* 🧱 CATEGORIAS */}
         {abaAtiva === "categorias" && (
           <div className={styles.content}>
-            <div className={styles.addCategoria}>
-              <input
-                type="text"
-                value={categoriaDescricao}
-                onChange={(e) => setCategoriaDescricao(e.target.value)}
-                placeholder="Nova categoria..."
-              />
-              <button onClick={cadastrarCategoria} className={styles.addBtn}>
-                <Plus size={18} /> Adicionar
+
+            <div className={styles.toolbar}>
+              <button className={styles.addBtn} onClick={() => {
+                setEditando(null);
+                setCategoriaDescricao("");
+                setPreview(null);
+                setImagemCategoria(null);
+                setModalCategoria(true);
+              }}>
+                <Plus size={18} /> Nova Categoria
               </button>
             </div>
 
@@ -343,23 +417,116 @@ export const GestaoCadastros: React.FC = () => {
                     <tr>
                       <th>ID</th>
                       <th>Descrição</th>
+                      <th>Imagem</th>
+                      <th>Ações</th>
                     </tr>
                   </thead>
+
                   <tbody>
                     {categorias.map((c) => (
                       <tr key={c.id}>
                         <td>{c.id}</td>
                         <td>{c.descricao}</td>
+                        <td>
+                          {c.id && (
+                            <img
+                              src={`${URL_API_GESTAO}/categoria/imagem/${c.id}`}
+                              width={40}
+                              style={{ borderRadius: "6px" }}
+                            />
+                          )}
+                        </td>
+                        {/* <td>{c.ativo ? "Ativo" : "Inativo"}</td> */}
+                        <td>
+                          <div className={styles.btnsAcao}>
+                            {/* <button
+                              className={styles.editBtn}
+                              onClick={() => {
+                                // setEditando();
+                                setCategoriaDescricao(c.descricao);
+                                setPreview(`${URL_API_GESTAO}/categoria/${c.id}/imagem`);
+                                setImagemCategoria(null);
+                                setModalCategoria(true);
+                              }}
+                            >
+                              <Edit2 size={16} />
+                            </button> */}
+
+                            <button
+                              className={styles.trashBtn}
+                              onClick={() => desativarCategoria(c)}
+                              title="Desativar categoria"
+                            >
+                              <Trash size={16} />
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
+
                 </table>
               </div>
             ) : (
               "Sem categorias"
             )}
+
+            {/* ================== MODAL CATEGORIA ================== */}
+            {modalCategoria && (
+              <div className={styles.modalOverlay} onClick={() => setModalCategoria(false)}>
+                <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                  <div className={styles.modalHeader}>
+                    <h2>{editando ? "Editar Categoria" : "Nova Categoria"}</h2>
+                    <button className={styles.closeBtn} onClick={() => setModalCategoria(false)}>
+                      <X size={22} />
+                    </button>
+                  </div>
+
+                  <div className={styles.modalBody}>
+                    <label>Descrição:</label>
+                    <input
+                      type="text"
+                      value={categoriaDescricao}
+                      onChange={(e) => setCategoriaDescricao(e.target.value)}
+                      placeholder="Descrição da categoria"
+                    />
+
+                    <label>Imagem:</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        setImagemCategoria(file);
+                        if (file) setPreview(URL.createObjectURL(file));
+                      }}
+                    />
+
+                    {preview && (
+                      <img src={preview} className={styles.previewImg} />
+                    )}
+                  </div>
+
+                  <div className={styles.modalFooter}>
+                    <button
+                      className={styles.saveBtn}
+                      disabled={loading}
+                      onClick={salvarCategoria}
+                    >
+                      {loading
+                        ? "Salvando..."
+                        : editando
+                          ? "Salvar Alterações"
+                          : "Cadastrar Categoria"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
           </div>
         )}
+
 
         {/* 🧩 MODAL DE PRODUTO */}
         {modalAberto && (
@@ -426,8 +593,8 @@ export const GestaoCadastros: React.FC = () => {
                     {loading
                       ? "Salvando..."
                       : editando
-                      ? "Salvar Alterações"
-                      : "Cadastrar Produto"}
+                        ? "Salvar Alterações"
+                        : "Cadastrar Produto"}
                   </button>
                 </div>
               </form>
